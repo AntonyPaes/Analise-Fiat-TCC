@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-fiatRed: #E4002B;
+  --color-fiatDark: #1C1C1C;
+  --color-fiatGray: #F5F5F5;
+  --color-fiatInput: #EAEAEA;
+  
+  --font-sans: 'Inter', sans-serif;
+  
+  --animate-fade-in: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@layer base {
+  body {
+    @apply bg-fiatGray text-fiatDark font-sans antialiased min-h-screen selection:bg-fiatRed selection:text-white;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full bg-fiatInput border border-transparent text-gray-900 text-sm rounded-lg focus:ring-fiatRed focus:border-fiatRed block p-3 transition-colors duration-200 outline-none;
+  }
+  
+  .label-text {
+    @apply block mb-2 text-sm font-medium text-gray-700;
+  }
+  
+  .btn-primary {
+    @apply w-full text-white bg-fiatRed hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg text-base px-5 py-3 text-center shadow-md hover:shadow-lg transition-all duration-300;
+  }
+}

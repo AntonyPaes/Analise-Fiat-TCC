@@ -1,0 +1,74 @@
+===========================================================
+        INSTRUÇÕES DE USO: CONECTANDO E RODANDO O SISTEMA
+===========================================================
+
+Siga o passo a passo abaixo para rodar a aplicação por completo, incluindo o banco de dados.
+
+-----------------------------------------------------------
+1. PREPARANDO O BANCO DE DADOS (PostgreSQL)
+-----------------------------------------------------------
+Para que a aplicação funcione, você precisa ter o PostgreSQL instalado no seu computador.
+
+Passo A: Abra o seu PostgreSQL (pode ser via pgAdmin ou linha de comando).
+Passo B: Crie um novo banco de dados vazio com o exato nome: fiat_db
+Passo C: Lembre-se da senha que você usa para o usuário "postgres".
+
+
+-----------------------------------------------------------
+2. CONFIGURANDO A APLICAÇÃO (Backend)
+-----------------------------------------------------------
+A aplicação precisa saber como acessar o banco que você acabou de criar.
+
+Passo A: Vá até a pasta "backend" do projeto e abra o arquivo ".env".
+Passo B: Localize a variável DB_PASSWORD e coloque a sua senha do PostgreSQL.
+         (Exemplo: se sua senha for admin, mude para DB_PASSWORD=admin).
+
+* O arquivo espera que o banco esteja rodando na porta padrão (5432).
+
+
+-----------------------------------------------------------
+3. RODANDO O SERVIDOR (Backend)
+-----------------------------------------------------------
+Com o banco configurado, precisamos ligar o servidor que vai criar as tabelas e gerenciar os dados.
+
+Passo A: Abra uma NOVA janela de terminal usando Command Prompt.
+Passo B: Navegue até a pasta "backend":
+         cd C:\Users\Anton\Documents\AnaliseFiat\backend
+Passo C: Instale as dependências (necessário apenas na primeira vez):
+         npm install
+Passo D: Inicie o servidor:
+         npm start
+         
+Se tudo der certo, o console vai mostrar as mensagens:
+✅ Database connected & synced
+🚀 Servidor BACKEND rodando em: http://localhost:3000
+
+* IMPORTANTE: Deixe esta janela preta do terminal aberta e rodando!
+
+
+-----------------------------------------------------------
+4. RODANDO A TELA (Frontend)
+-----------------------------------------------------------
+Agora vamos ligar a interface visual para podermos interagir com o sistema.
+
+Passo A: Abra uma NOVA janela de terminal usando Command Prompt (não feche a do backend).
+Passo B: Navegue até a pasta "frontend":
+         cd C:\Users\Anton\Documents\AnaliseFiat\frontend
+Passo C: Instale as dependências visuais (necessário apenas na primeira vez):
+         npm install
+Passo D: Inicie a interface:
+         npm run dev
+
+O terminal vai gerar um link azul, normalmente http://localhost:5173/.
+Basta segurar a tecla Ctrl do teclado e clicar nesse link para abrir o sistema no seu navegador da web.
+
+
+-----------------------------------------------------------
+5. VALIDANDO (Testes)
+-----------------------------------------------------------
+Se quiser garantir que o banco e a API estão 100% integrados e funcionando, o projeto conta com testes automatizados.
+
+Passo A: No terminal, navegue até a pasta "backend".
+Passo B: Rode o comando:
+         npm test
+Isso vai executar os testes unitários e de integração de ponta a ponta.
