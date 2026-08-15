@@ -1,0 +1,197 @@
+# RELATÓRIO DETALHADO DO DESENVOLVIMENTO (BACKEND & FRONTEND)
+## SISTEMA DE ANÁLISE FIAT - BASE PARA AVALIAÇÃO DO TCC
+
+Este documento apresenta todo o ecossistema tecnológico, a modelagem de dados, as rotas de API, os scripts de sementes (seeders) e a infraestrutura de testes desenvolvida para o **Sistema de Análise Fiat**. Use esta especificação técnica para revisar e ajustar o documento escrito do seu TCC.
+
+---
+
+### 1. ARQUITETURA GERAL DO SISTEMA
+O sistema foi desenvolvido sob uma **Arquitetura Cliente-Servidor Desacoplada (Decoupled MVC)**, dividida em:
+*   **Frontend (Camada de Visualização):** Aplicação de página única (SPA) interativa construída com **React 19** e compilada via **Vite**.
+*   **Backend (Camada de Lógica de Negócios e Controle):** API RESTful desenvolvida em **Node.js** com o framework **Express.js**.
+*   **Camada de Persistência de Dados (ORM):** O **Sequelize** atua como mapeador objeto-relacional (ORM), abstraindo comandos SQL.
+*   **Bancos de Dados:**
+    *   **PostgreSQL:** Banco de dados relacional oficial utilizado para o ambiente de desenvolvimento e produção.
+    *   **SQLite:** Banco relacional leve rodado "em memória" (`sqlite::memory:`) exclusivamente durante a execução de testes automatizados para garantir rapidez e isolamento.
+
+---
+
+### 2. FRONTEND (Interface do Usuário)
+A interface foi projetada com foco em reatividade dinâmica e visual moderno, localizada na pasta `/frontend`.
+
+*   **Vite:** Substitui o antigo *Create React App* para carregamento ultrarrápido em desenvolvimento via ES Modules nativos e bundling de produção otimizado com Rollup.
+*   **React 19:** Biblioteca base baseada em componentes reativos. Controla o estado dinâmico dos formulários e buscas na API.
+*   **Tailwind CSS (v4):** Utilizado para estilização através de classes utilitárias diretamente nos componentes. A folha de estilos `/frontend/src/index.css` define variáveis temáticas corporativas da marca FIAT:
+    *   `--color-fiatRed` (`#E4002B` - Vermelho Fiat Oficial)
+    *   `--color-fiatDark` (`#1C1C1C` - Cinza Escuro/Preto de alto contraste)
+    *   `--color-fiatGray` (`#F5F5F5` - Fundo cinza claro texturizado)
+    *   `--color-fiatInput` (`#EAEAEA` - Campos de texto sutis)
+    *   Fonte padrão: **Inter** (importada do Google Fonts).
+*   **Lucide React:** Biblioteca de ícones vetoriais em formato SVG (ícones como `CarFront`, `AlertCircle`, `CheckCircle2`).
+*   **Componente Central (`VehicleForm.jsx`):**
+    *   Consome a rota de opções do backend para preencher os dropdowns de forma **cascata (hierárquica)**.
+    *   **Lógica de Filtros no State:** Ao selecionar um *Modelo*, o React calcula e libera apenas os *Anos* existentes para aquele modelo no banco. Ao selecionar o *Ano*, filtra as *Motorizações* correspondentes e, em seguida, os *Câmbios* compatíveis. Evita erros de entrada de dados inconsistentes pelo usuário (ex: cadastrar um Uno 2008 com câmbio CVT automático).
+    *   Submete os dados validados (Modelo, Ano, Motorização, Tipo de Câmbio e Quilometragem) via requisição `POST` em formato JSON para a API backend.
+
+---
+
+### 3. BACKEND & CAMADA DE DADOS
+Desenvolvido na pasta `/backend`, atuando estritamente como uma API RESTful sem acoplamento visual.
+
+*   **Express.js:** Gerencia o roteamento HTTP, parseamento do corpo da requisição em JSON (`express.json()`) e liberação de acessos CORS (`cors()`) para permitir chamadas locais originadas do frontend (Porta 5173 para Porta 3000).
+*   **Sequelize ORM:** Mapeia classes Javascript para tabelas relacionais do banco. Responsável pelas transações, validações de campos e integridade referencial.
+*   **Configuração de Ambiente (`dotenv`):** As credenciais de conexão com o banco são lidas dinamicamente do arquivo `.env` para proteção dos dados de produção.
+*   *Nota Importante sobre Prisma:* Embora as dependências `@prisma/client` e `prisma` estejam declaradas no `package.json` e exista um arquivo inicial `schema.prisma`, **o Prisma NÃO está sendo usado**. Toda a comunicação do banco é feita pelo **Sequelize**. Certifique-se de documentar no TCC o uso do **Sequelize** e não do Prisma para evitar contradições.
+
+---
+
+### 4. MODELAGEM DE DADOS (Entidades e Relacionamentos)
+Foram mapeados 4 modelos com relacionamentos rígidos do tipo **1 para Muitos (1:N)** e políticas de deleção em cascata (`CASCADE`):
+
+```mermaid
+erDiagram
+    VEHICLE ||--o{ SYMPTOM : "possui (1:N)"
+    SYMPTOM ||--o{ CAUSE : "apresenta (1:N)"
+    CAUSE ||--o{ REPAIR_GUIDE : "requer (1:N)"
+
+    VEHICLE {
+        int id PK
+        string modelo
+        int ano
+        string motorizacao
+        int quilometragem
+        string tipo_cambio
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    SYMPTOM {
+        int id PK
+        string nome
+        text descricao
+        string codigo_obd
+        string status "Pendente"
+        int vehicleId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    CAUSE {
+        int id PK
+        string nome
+        text descricao
+        string probabilidade "Alta/Média/Baixa"
+        int symptomId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    REPAIR_GUIDE {
+        int id PK
+        string titulo
+        text descricao
+        text passos
+        string tempo_estimado
+        string dificuldade
+        text ferramentas
+        int causeId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+```
+
+#### Regras de Relacionamento no Sequelize:
+1.  **Vehicle -> Symptom:** `Vehicle.hasMany(Symptom, { foreignKey: 'vehicleId', as: 'symptoms', onDelete: 'CASCADE' });`
+2.  **Symptom -> Cause:** `Symptom.hasMany(Cause, { foreignKey: 'symptomId', as: 'causes', onDelete: 'CASCADE' });`
+3.  **Cause -> RepairGuide:** `Cause.hasMany(RepairGuide, { foreignKey: 'causeId', as: 'repairGuides', onDelete: 'CASCADE' });`
+*Se um Veículo for removido do sistema, todos os seus Sintomas associados, suas respectivas Causas e todos os Guias de Reparo dependentes serão excluídos automaticamente do banco de dados (Integridade Referencial por Cascade).*
+
+---
+
+### 5. ENDPOINTS DA API (ROTAS)
+A API responde no endereço `http://localhost:3000` com os seguintes endpoints implementados em `app.js`:
+
+#### A. Obtenção de Opções Filtradas
+*   **Rota:** `GET /api/vehicles/options`
+*   **Descrição:** Executa uma query otimizada de agrupamento (`GROUP BY`) no banco de dados para listar todas as combinações válidas de modelos cadastrados.
+*   **Retorno JSON (Exemplo):**
+    ```json
+    [
+      {
+        "modelo": "Argo",
+        "ano": 2023,
+        "motorizacao": "1.0 Firefly",
+        "tipo_cambio": "Manual"
+      },
+      {
+        "modelo": "Toro",
+        "ano": 2022,
+        "motorizacao": "2.0 Turbodiesel",
+        "tipo_cambio": "Automático 9 Marchas"
+      }
+    ]
+    ```
+
+#### B. Registro de Veículo Diagnosticado
+*   **Rota:** `POST /api/vehicles`
+*   **Descrição:** Recebe as especificações técnicas enviadas pelo formulário do frontend, valida a presença de todos os campos obrigatórios e registra o veículo no banco de dados.
+*   **Payload de Entrada (Exemplo):**
+    ```json
+    {
+      "modelo": "Pulse",
+      "ano": 2024,
+      "motorizacao": "1.0 Turbo 200",
+      "quilometragem": 12000,
+      "tipo_cambio": "Automático CVT"
+    }
+    ```
+*   **Retorno JSON (Sucesso - Status 201):**
+    ```json
+    {
+      "id": 45,
+      "modelo": "Pulse",
+      "ano": 2024,
+      "motorizacao": "1.0 Turbo 200",
+      "quilometragem": 12000,
+      "tipo_cambio": "Automático CVT",
+      "updatedAt": "2026-06-04T03:18:00.000Z",
+      "createdAt": "2026-06-04T03:18:00.000Z"
+    }
+    ```
+*   **Retorno JSON (Erro de Validação - Status 400):**
+    ```json
+    {
+      "error": "Todos os campos do veículo são obrigatórios."
+    }
+    ```
+
+---
+
+### 6. POPULAÇÃO AUTOMÁTICA DO BANCO (SEEDING)
+Para evitar que o sistema inicie vazio em novas instalações, foi desenvolvido um algoritmo de combinatória em `/backend/config/seed.js`.
+*   O script define **24 modelos base da FIAT** comercializados entre **2008 e 2026** (incluindo modelos históricos como Palio, Stilo, Punto, Linea, Stilo e modernos como Fastback, Toro, Pulse, Titano e o elétrico 500e).
+*   **Funcionamento:** O algoritmo varre cada modelo, calcula os anos correspondentes no intervalo de fabricação, gera as combinações de motorizações e tipos de câmbio associados a cada um e realiza uma inserção em lote (`Vehicle.bulkCreate`) de milhares de configurações técnicas válidas no banco de dados automaticamente na primeira execução do servidor.
+
+---
+
+### 7. QUALIDADE E TESTES AUTOMATIZADOS (JEST & SUPERTEST)
+Uma parte de grande peso acadêmico no TCC é a garantia de qualidade de software. O projeto possui testes unitários e de integração implementados em `/backend/tests`.
+
+*   **Testes Unitários (`unit.test.js`):**
+    *   Verificam a existência exata e o tipo de dados dos campos declarados nos modelos (Vehicle, Symptom, Cause e RepairGuide).
+    *   Validam programaticamente se os relacionamentos e chaves estrangeiras entre as tabelas estão corretamente vinculados.
+*   **Testes de Integração (`integration.test.js`):**
+    *   Simulam chamadas HTTP reais na API do Express usando a biblioteca Supertest.
+    *   Testam os fluxos felizes (Happy Paths) de criação de dados e comportamentos em caso de payloads inválidos (Status 400).
+    *   **Fluxo Completo de Diagnóstico:** Insere sequencialmente um Veículo, associa um Sintoma a este veículo, vincula uma Causa a este sintoma, e por fim atribui um Guia de Reparo à causa. O teste recupera a árvore completa do banco de dados fazendo buscas com joins aninhados (`Sequelize includes`), verificando se todos os dados mantiveram sua integridade e se relacionaram corretamente do início ao fim.
+
+---
+
+### 8. RECOMENDAÇÕES PARA AJUSTES NO DOCUMENTO DO TCC
+
+Ao revisar a redação da sua monografia/documento do TCC, atente-se aos seguintes pontos para evitar divergências com o código-fonte atual:
+
+1.  **Sequelize vs Prisma:** Certifique-se de que o documento cite o **Sequelize** como a ferramenta de ORM (Object-Relational Mapping) ativa do sistema. O Prisma consta nas dependências, mas sua arquitetura de modelos e rotas foi implementada e validada em Sequelize.
+2.  **Relacionamento 1:N Puro:** Se o seu documento inicial descrevia relacionamentos N:N (Muitos para Muitos) entre sintomas e causas, altere para **1:N (Um para Muitos)**. O código atual do banco de dados mapeia que uma `Causa` pertence a apenas um `Sintoma` (`symptomId` na tabela de causas), e um `Guia de Reparo` pertence a uma única `Causa` (`causeId` na tabela de guias).
+3.  **Tecnologia de Testes:** Destaque o uso do **SQLite em memória** na seção de Metodologia/Testes. Explicar para a banca que você usou um banco em memória para isolar e agilizar os testes é um forte diferencial técnico que demonstra maturidade no desenvolvimento de software.
+4.  **Tempos de Fabricação (2008 - 2026):** Caso o documento mencione anos limite ou suporte do sistema, especifique que a base de dados possui suporte a veículos fabricados a partir de 2008 até projeções de 2026.

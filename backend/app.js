@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
-const Vehicle = require('./models/Vehicle');
+const { Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.get('/api/vehicles/options', async (req, res) => {
   try {
-    const options = await Vehicle.findAll({
+    const options = await VehicleCatalog.findAll({
       attributes: ['modelo', 'ano', 'motorizacao', 'tipo_cambio'],
       group: ['modelo', 'ano', 'motorizacao', 'tipo_cambio'],
       order: [['modelo', 'ASC'], ['ano', 'DESC']]
