@@ -109,13 +109,7 @@ const VehicleForm = ({ onNext }) => {
       }
 
       if (onNext) {
-        onNext({
-          modelo: formData.modelo,
-          ano: parseInt(formData.ano),
-          motorizacao: formData.motorizacao,
-          quilometragem: cleanKm,
-          tipo_cambio: formData.tipo_cambio,
-        });
+        onNext(data);
       }
 
       setStatus({ type: 'success', message: 'Dados do veículo registrados com sucesso!' });

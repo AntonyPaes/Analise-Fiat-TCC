@@ -1,4 +1,6 @@
 const VehicleCatalog = require('../models/VehicleCatalog');
+const { SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('../models');
+const symptomsCatalogData = require('./symptoms_catalog');
 
 const fiatBaseModels = [
   { modelo: 'Palio', anos: [2008, 2017], motorizacoes: ['1.0 Fire', '1.4 Fire', '1.6 E.torQ', '1.8 Powertrain'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
@@ -28,6 +30,7 @@ const fiatBaseModels = [
 
 async function seedDatabase() {
   try {
+    // 1. Seed fiatBaseModels into VehicleCatalog
     const count = await VehicleCatalog.count();
     if (count === 0) {
       console.log('🌱 Gerando combinações de veículos FIAT de 2008 até 2026 para o catálogo...');
@@ -55,10 +58,36 @@ async function seedDatabase() {
       await VehicleCatalog.bulkCreate(generatedVehicles);
       console.log('✅ Catálogo de veículos FIAT inserido com sucesso!');
     } else {
-      console.log('ℹ️ O catálogo já possui veículos cadastrados. Pulando inserção inicial.');
+      console.log('ℹ️ O catálogo de veículos já possui registros. Pulando.');
     }
+
+    // 2. Seed symptomsCatalogData into SymptomCatalog
+    const symptomCount = await SymptomCatalog.count();
+    if (symptomCount === 0) {
+      console.log('🌱 Gerando catálogo de sintomas no banco de dados...');
+      for (const symptom of symptomsCatalogData) {
+        await SymptomCatalog.create(symptom, {
+          include: [
+            {
+              model: CauseCatalog,
+              as: 'causes',
+              include: [
+                {
+                  model: RepairGuideCatalog,
+                  as: 'repairGuides'
+                }
+              ]
+            }
+          ]
+        });
+      }
+      console.log('✅ Catálogo de sintomas inserido com sucesso no banco de dados!');
+    } else {
+      console.log('ℹ️ O catálogo de sintomas já possui registros no banco de dados. Pulando.');
+    }
+
   } catch (error) {
-    console.error('❌ Erro ao popular o catálogo de veículos:', error);
+    console.error('❌ Erro ao popular o catálogo:', error);
   }
 }
 

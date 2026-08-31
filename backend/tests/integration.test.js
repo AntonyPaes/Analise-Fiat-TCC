@@ -2,10 +2,12 @@ const request = require('supertest');
 const app = require('../app');
 const sequelize = require('../config/database');
 const { Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide } = require('../models');
+const seedDatabase = require('../config/seed');
 
 beforeAll(async () => {
   process.env.NODE_ENV = 'test';
   await sequelize.sync({ force: true });
+  await seedDatabase();
 });
 
 afterAll(async () => {
@@ -128,3 +130,74 @@ describe('Database Integration Flow (Vehicle -> Symptom -> Cause -> RepairGuide)
     expect(retrievedVehicle.symptoms[0].causes[0].repairGuides[0].titulo).toBe('Substituição ou recarga da bateria');
   });
 });
+
+describe('Diagnosis API Integrations', () => {
+  let testVehicle;
+
+  beforeEach(async () => {
+    testVehicle = await Vehicle.create({
+      modelo: 'Mobi',
+      ano: 2022,
+      motorizacao: '1.0 Firefly',
+      quilometragem: 30000,
+      tipo_cambio: 'Manual'
+    });
+  });
+
+  it('deve realizar diagnóstico com match exato de palavra-chave', async () => {
+    const response = await request(app)
+      .post(`/api/vehicles/${testVehicle.id}/diagnose`)
+      .send({
+        selectedCategory: 'Freios',
+        description: 'sinto um barulho de atrito de metal raspando ao frear o carro nas pastilhas'
+      });
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].nome).toBe('Barulho de atrito metálico ao frear');
+    expect(response.body[0].causes[0].nome).toBe('Pastilhas de freio totalmente gastas');
+    expect(response.body[0].causes[0].repairGuides[0].titulo).toBe('Substituição das pastilhas de freio dianteiras');
+  });
+
+  it('deve retornar todos os sintomas da categoria como fallback se não houver match de palavra-chave', async () => {
+    const response = await request(app)
+      .post(`/api/vehicles/${testVehicle.id}/diagnose`)
+      .send({
+        selectedCategory: 'Motor',
+        description: 'coisas estranhas aleatorias sem palavras chave mapeadas'
+      });
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBe(10);
+    const names = response.body.map(s => s.nome);
+    expect(names).toContain('Motor falhando / perda de potência');
+    expect(names).toContain('Superaquecimento do motor / luz de temperatura acesa');
+    expect(names).toContain('Ruído metálico no motor (batida de pino / tuchos)');
+  });
+
+  it('deve retornar 404 se o veículo não existir', async () => {
+    const response = await request(app)
+      .post('/api/vehicles/999999/diagnose')
+      .send({
+        selectedCategory: 'Motor',
+        description: 'motor falhando'
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Veículo não encontrado.');
+  });
+
+  it('deve retornar 400 se a categoria não for enviada', async () => {
+    const response = await request(app)
+      .post(`/api/vehicles/${testVehicle.id}/diagnose`)
+      .send({
+        description: 'motor falhando'
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('A categoria do sintoma é obrigatória.');
+  });
+});
+
