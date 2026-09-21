@@ -144,6 +144,9 @@ app.post('/api/vehicles/:vehicleId/diagnose', async (req, res) => {
       matchedSymptoms = categorySymptoms;
     }
 
+    // RF003: Limitar o resultado a no máximo 5 possíveis causas
+    matchedSymptoms = matchedSymptoms.slice(0, 5);
+
 
     // 5. Salvar a árvore de diagnóstico (Symptom -> Cause -> RepairGuide) no banco de dados vinculada ao veículo
     const savedSymptoms = [];

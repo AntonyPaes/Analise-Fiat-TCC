@@ -3,29 +3,322 @@ const { SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('../models'
 const symptomsCatalogData = require('./symptoms_catalog');
 
 const fiatBaseModels = [
-  { modelo: 'Palio', anos: [2008, 2017], motorizacoes: ['1.0 Fire', '1.4 Fire', '1.6 E.torQ', '1.8 Powertrain'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Uno', anos: [2008, 2021], motorizacoes: ['1.0 Fire', '1.4 Fire', '1.0 Firefly', '1.3 Firefly'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Siena', anos: [2008, 2016], motorizacoes: ['1.0 Fire', '1.4 Fire', '1.6 E.torQ', '1.8 Powertrain'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Grand Siena', anos: [2012, 2021], motorizacoes: ['1.0 Fire', '1.4 Fire', '1.6 E.torQ'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Strada', anos: [2008, 2026], motorizacoes: ['1.3 Firefly', '1.4 Fire', '1.6 E.torQ', '1.8 Powertrain', '1.0 Turbo T200'], cambios: ['Manual', 'Automático CVT', 'Automatizado (Dualogic)'] },
-  { modelo: 'Fiorino', anos: [2008, 2026], motorizacoes: ['1.3 Fire', '1.4 EVO'], cambios: ['Manual'] },
-  { modelo: 'Punto', anos: [2008, 2017], motorizacoes: ['1.4 Fire', '1.6 E.torQ', '1.8 E.torQ', '1.4 T-Jet'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Linea', anos: [2009, 2016], motorizacoes: ['1.9 16v', '1.8 E.torQ', '1.4 T-Jet'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Stilo', anos: [2008, 2011], motorizacoes: ['1.8 8v', '1.8 16v', '2.4 20v'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Bravo', anos: [2011, 2016], motorizacoes: ['1.8 E.torQ', '1.4 T-Jet'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Idea', anos: [2008, 2016], motorizacoes: ['1.4 Fire', '1.6 E.torQ', '1.8 E.torQ', '1.8 Powertrain'], cambios: ['Manual', 'Automatizado (Dualogic)'] },
-  { modelo: 'Doblo', anos: [2008, 2021], motorizacoes: ['1.4 Fire', '1.8 Powertrain', '1.8 E.torQ'], cambios: ['Manual'] },
-  { modelo: '500', anos: [2009, 2017], motorizacoes: ['1.4 EVO', '1.4 16v', '1.4 MultiAir'], cambios: ['Manual', 'Automático', 'Automatizado (Dualogic)'] },
-  { modelo: '500e', anos: [2021, 2026], motorizacoes: ['Elétrico (EV)'], cambios: ['Automático'] },
-  { modelo: 'Freemont', anos: [2011, 2016], motorizacoes: ['2.4 16v'], cambios: ['Automático'] },
-  { modelo: 'Toro', anos: [2016, 2026], motorizacoes: ['1.8 E.torQ', '2.4 Tigershark', '1.3 Turbo T270', '2.0 Turbodiesel', '2.2 Turbodiesel'], cambios: ['Manual', 'Automático 6 Marchas', 'Automático 9 Marchas'] },
-  { modelo: 'Mobi', anos: [2016, 2026], motorizacoes: ['1.0 Fire', '1.0 Firefly'], cambios: ['Manual', 'Automatizado (Dualogic/GSR)'] },
-  { modelo: 'Argo', anos: [2017, 2026], motorizacoes: ['1.0 Firefly', '1.3 Firefly', '1.8 E.torQ'], cambios: ['Manual', 'Automático 6 Marchas', 'Automático CVT', 'Automatizado (GSR)'] },
-  { modelo: 'Cronos', anos: [2018, 2026], motorizacoes: ['1.0 Firefly', '1.3 Firefly', '1.8 E.torQ'], cambios: ['Manual', 'Automático 6 Marchas', 'Automático CVT', 'Automatizado (GSR)'] },
-  { modelo: 'Pulse', anos: [2021, 2026], motorizacoes: ['1.3 Firefly', '1.0 Turbo T200', '1.3 Turbo T270 (Abarth)'], cambios: ['Manual', 'Automático CVT', 'Automático 6 Marchas'] },
-  { modelo: 'Fastback', anos: [2022, 2026], motorizacoes: ['1.0 Turbo T200', '1.3 Turbo T270'], cambios: ['Automático CVT', 'Automático 6 Marchas'] },
-  { modelo: 'Titano', anos: [2024, 2026], motorizacoes: ['2.2 Turbodiesel'], cambios: ['Manual', 'Automático 6 Marchas'] },
-  { modelo: 'Ducato', anos: [2008, 2026], motorizacoes: ['2.3 Turbodiesel', '2.2 Turbodiesel'], cambios: ['Manual'] }
+  {
+    modelo: 'Palio',
+    anos: [2008, 2017],
+    motorizacoes: [
+      { motor: '1.0 Fire', anos: [2008, 2017], cambios: [{ nome: 'Manual', anos: [2008, 2017] }] },
+      { motor: '1.4 Fire', anos: [2008, 2017], cambios: [{ nome: 'Manual', anos: [2008, 2017] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.6 E.torQ', anos: [2011, 2017], cambios: [
+          { nome: 'Manual', anos: [2011, 2017] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2017] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Uno',
+    anos: [2008, 2021],
+    motorizacoes: [
+      { motor: '1.0 Fire', anos: [2008, 2021], cambios: [{ nome: 'Manual', anos: [2008, 2021] }] },
+      { motor: '1.4 Fire', anos: [2010, 2016], cambios: [{ nome: 'Manual', anos: [2010, 2016] }] },
+      { motor: '1.0 Firefly', anos: [2017, 2021], cambios: [{ nome: 'Manual', anos: [2017, 2021] }] },
+      { motor: '1.3 Firefly', anos: [2017, 2021], cambios: [
+          { nome: 'Manual', anos: [2017, 2021] },
+          { nome: 'Automatizado (Dualogic/GSR)', anos: [2017, 2019] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Siena',
+    anos: [2008, 2016],
+    motorizacoes: [
+      { motor: '1.0 Fire', anos: [2008, 2016], cambios: [{ nome: 'Manual', anos: [2008, 2016] }] },
+      { motor: '1.4 Fire', anos: [2008, 2016], cambios: [{ nome: 'Manual', anos: [2008, 2016] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.6 E.torQ', anos: [2011, 2012], cambios: [
+          { nome: 'Manual', anos: [2011, 2012] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2012] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Grand Siena',
+    anos: [2012, 2021],
+    motorizacoes: [
+      { motor: '1.0 Fire', anos: [2016, 2021], cambios: [{ nome: 'Manual', anos: [2016, 2021] }] },
+      { motor: '1.4 Fire', anos: [2012, 2021], cambios: [{ nome: 'Manual', anos: [2012, 2021] }] },
+      { motor: '1.6 E.torQ', anos: [2012, 2018], cambios: [
+          { nome: 'Manual', anos: [2012, 2018] },
+          { nome: 'Automatizado (Dualogic)', anos: [2012, 2018] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Strada',
+    anos: [2008, 2026],
+    motorizacoes: [
+      { motor: '1.4 Fire', anos: [2008, 2024], cambios: [{ nome: 'Manual', anos: [2008, 2024] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.6 E.torQ', anos: [2011, 2016], cambios: [
+          { nome: 'Manual', anos: [2011, 2016] },
+          { nome: 'Automatizado (Dualogic)', anos: [2012, 2016] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2017, 2020], cambios: [
+          { nome: 'Manual', anos: [2017, 2020] },
+          { nome: 'Automatizado (Dualogic)', anos: [2017, 2018] }
+        ] 
+      },
+      { motor: '1.3 Firefly', anos: [2020, 2026], cambios: [
+          { nome: 'Manual', anos: [2020, 2026] },
+          { nome: 'Automático CVT', anos: [2022, 2026] }
+        ] 
+      },
+      { motor: '1.0 Turbo T200', anos: [2023, 2026], cambios: [{ nome: 'Automático CVT', anos: [2023, 2026] }] }
+    ]
+  },
+  {
+    modelo: 'Fiorino',
+    anos: [2008, 2026],
+    motorizacoes: [
+      { motor: '1.3 Fire', anos: [2008, 2013], cambios: [{ nome: 'Manual', anos: [2008, 2013] }] },
+      { motor: '1.4 EVO', anos: [2014, 2026], cambios: [{ nome: 'Manual', anos: [2014, 2026] }] }
+    ]
+  },
+  {
+    modelo: 'Punto',
+    anos: [2008, 2017],
+    motorizacoes: [
+      { motor: '1.4 Fire', anos: [2008, 2017], cambios: [{ nome: 'Manual', anos: [2008, 2017] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.6 E.torQ', anos: [2011, 2017], cambios: [
+          { nome: 'Manual', anos: [2011, 2017] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2017] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2011, 2017], cambios: [
+          { nome: 'Manual', anos: [2011, 2017] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2017] }
+        ] 
+      },
+      { motor: '1.4 T-Jet', anos: [2009, 2016], cambios: [{ nome: 'Manual', anos: [2009, 2016] }] }
+    ]
+  },
+  {
+    modelo: 'Linea',
+    anos: [2009, 2016],
+    motorizacoes: [
+      { motor: '1.9 16v', anos: [2009, 2010], cambios: [
+          { nome: 'Manual', anos: [2009, 2010] },
+          { nome: 'Automatizado (Dualogic)', anos: [2009, 2010] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2011, 2016], cambios: [
+          { nome: 'Manual', anos: [2011, 2016] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2016] }
+        ] 
+      },
+      { motor: '1.4 T-Jet', anos: [2009, 2012], cambios: [{ nome: 'Manual', anos: [2009, 2012] }] }
+    ]
+  },
+  {
+    modelo: 'Stilo',
+    anos: [2008, 2011],
+    motorizacoes: [
+      { motor: '1.8 8v', anos: [2008, 2011], cambios: [
+          { nome: 'Manual', anos: [2008, 2011] },
+          { nome: 'Automatizado (Dualogic)', anos: [2008, 2011] }
+        ] 
+      },
+      { motor: '1.8 16v', anos: [2008, 2009], cambios: [{ nome: 'Manual', anos: [2008, 2009] }] },
+      { motor: '2.4 20v', anos: [2008, 2009], cambios: [{ nome: 'Manual', anos: [2008, 2009] }] }
+    ]
+  },
+  {
+    modelo: 'Bravo',
+    anos: [2011, 2016],
+    motorizacoes: [
+      { motor: '1.8 E.torQ', anos: [2011, 2016], cambios: [
+          { nome: 'Manual', anos: [2011, 2016] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2016] }
+        ] 
+      },
+      { motor: '1.4 T-Jet', anos: [2011, 2016], cambios: [{ nome: 'Manual', anos: [2011, 2016] }] }
+    ]
+  },
+  {
+    modelo: 'Idea',
+    anos: [2008, 2016],
+    motorizacoes: [
+      { motor: '1.4 Fire', anos: [2008, 2016], cambios: [{ nome: 'Manual', anos: [2008, 2016] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.6 E.torQ', anos: [2011, 2016], cambios: [
+          { nome: 'Manual', anos: [2011, 2016] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2016] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2011, 2016], cambios: [
+          { nome: 'Manual', anos: [2011, 2016] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2016] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Doblo',
+    anos: [2008, 2021],
+    motorizacoes: [
+      { motor: '1.4 Fire', anos: [2010, 2016], cambios: [{ nome: 'Manual', anos: [2010, 2016] }] },
+      { motor: '1.8 Powertrain', anos: [2008, 2010], cambios: [{ nome: 'Manual', anos: [2008, 2010] }] },
+      { motor: '1.8 E.torQ', anos: [2011, 2021], cambios: [{ nome: 'Manual', anos: [2011, 2021] }] }
+    ]
+  },
+  {
+    modelo: '500',
+    anos: [2009, 2017],
+    motorizacoes: [
+      { motor: '1.4 16v', anos: [2009, 2011], cambios: [
+          { nome: 'Manual', anos: [2009, 2011] },
+          { nome: 'Automático', anos: [2009, 2011] }
+        ] 
+      },
+      { motor: '1.4 EVO', anos: [2011, 2017], cambios: [
+          { nome: 'Manual', anos: [2011, 2017] },
+          { nome: 'Automatizado (Dualogic)', anos: [2011, 2015] }
+        ] 
+      },
+      { motor: '1.4 MultiAir', anos: [2011, 2017], cambios: [
+          { nome: 'Manual', anos: [2011, 2017] },
+          { nome: 'Automático', anos: [2011, 2017] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: '500e',
+    anos: [2021, 2026],
+    motorizacoes: [
+      { motor: 'Elétrico (EV)', anos: [2021, 2026], cambios: [{ nome: 'Automático', anos: [2021, 2026] }] }
+    ]
+  },
+  {
+    modelo: 'Freemont',
+    anos: [2011, 2016],
+    motorizacoes: [
+      { motor: '2.4 16v', anos: [2011, 2016], cambios: [{ nome: 'Automático', anos: [2011, 2016] }] }
+    ]
+  },
+  {
+    modelo: 'Toro',
+    anos: [2016, 2026],
+    motorizacoes: [
+      { motor: '1.8 E.torQ', anos: [2016, 2021], cambios: [
+          { nome: 'Manual', anos: [2016, 2021] },
+          { nome: 'Automático 6 Marchas', anos: [2016, 2021] }
+        ] 
+      },
+      { motor: '2.4 Tigershark', anos: [2016, 2020], cambios: [{ nome: 'Automático 9 Marchas', anos: [2016, 2020] }] },
+      { motor: '1.3 Turbo T270', anos: [2021, 2026], cambios: [{ nome: 'Automático 6 Marchas', anos: [2021, 2026] }] },
+      { motor: '2.0 Turbodiesel', anos: [2016, 2026], cambios: [
+          { nome: 'Manual', anos: [2016, 2019] },
+          { nome: 'Automático 9 Marchas', anos: [2016, 2026] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Mobi',
+    anos: [2016, 2026],
+    motorizacoes: [
+      { motor: '1.0 Fire', anos: [2016, 2026], cambios: [{ nome: 'Manual', anos: [2016, 2026] }] },
+      { motor: '1.0 Firefly', anos: [2017, 2020], cambios: [
+          { nome: 'Manual', anos: [2017, 2020] },
+          { nome: 'Automatizado (GSR)', anos: [2017, 2020] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Argo',
+    anos: [2017, 2026],
+    motorizacoes: [
+      { motor: '1.0 Firefly', anos: [2017, 2026], cambios: [{ nome: 'Manual', anos: [2017, 2026] }] },
+      { motor: '1.3 Firefly', anos: [2017, 2026], cambios: [
+          { nome: 'Manual', anos: [2017, 2026] },
+          { nome: 'Automatizado (GSR)', anos: [2017, 2019] },
+          { nome: 'Automático CVT', anos: [2022, 2026] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2017, 2021], cambios: [
+          { nome: 'Manual', anos: [2017, 2021] },
+          { nome: 'Automático 6 Marchas', anos: [2017, 2021] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Cronos',
+    anos: [2018, 2026],
+    motorizacoes: [
+      { motor: '1.0 Firefly', anos: [2022, 2026], cambios: [{ nome: 'Manual', anos: [2022, 2026] }] },
+      { motor: '1.3 Firefly', anos: [2018, 2026], cambios: [
+          { nome: 'Manual', anos: [2018, 2026] },
+          { nome: 'Automatizado (GSR)', anos: [2018, 2019] },
+          { nome: 'Automático CVT', anos: [2022, 2026] }
+        ] 
+      },
+      { motor: '1.8 E.torQ', anos: [2018, 2021], cambios: [
+          { nome: 'Manual', anos: [2018, 2021] },
+          { nome: 'Automático 6 Marchas', anos: [2018, 2021] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Pulse',
+    anos: [2021, 2026],
+    motorizacoes: [
+      { motor: '1.3 Firefly', anos: [2021, 2026], cambios: [
+          { nome: 'Manual', anos: [2021, 2026] },
+          { nome: 'Automático CVT', anos: [2021, 2026] }
+        ] 
+      },
+      { motor: '1.0 Turbo T200', anos: [2021, 2026], cambios: [{ nome: 'Automático CVT', anos: [2021, 2026] }] },
+      { motor: '1.3 Turbo T270 (Abarth)', anos: [2023, 2026], cambios: [{ nome: 'Automático 6 Marchas', anos: [2023, 2026] }] }
+    ]
+  },
+  {
+    modelo: 'Fastback',
+    anos: [2022, 2026],
+    motorizacoes: [
+      { motor: '1.0 Turbo T200', anos: [2022, 2026], cambios: [{ nome: 'Automático CVT', anos: [2022, 2026] }] },
+      { motor: '1.3 Turbo T270', anos: [2022, 2026], cambios: [{ nome: 'Automático 6 Marchas', anos: [2022, 2026] }] }
+    ]
+  },
+  {
+    modelo: 'Titano',
+    anos: [2024, 2026],
+    motorizacoes: [
+      { motor: '2.2 Turbodiesel', anos: [2024, 2026], cambios: [
+          { nome: 'Manual', anos: [2024, 2026] },
+          { nome: 'Automático 6 Marchas', anos: [2024, 2026] }
+        ] 
+      }
+    ]
+  },
+  {
+    modelo: 'Ducato',
+    anos: [2008, 2026],
+    motorizacoes: [
+      { motor: '2.3 Turbodiesel', anos: [2010, 2022], cambios: [{ nome: 'Manual', anos: [2010, 2022] }] },
+      { motor: '2.2 Turbodiesel', anos: [2023, 2026], cambios: [{ nome: 'Manual', anos: [2023, 2026] }] }
+    ]
+  }
 ];
 
 async function seedDatabase() {
@@ -37,17 +330,29 @@ async function seedDatabase() {
 
       let generatedVehicles = [];
       for (const base of fiatBaseModels) {
-        const { modelo, anos, motorizacoes, cambios } = base;
+        const { modelo, anos, motorizacoes } = base;
         for (let ano = anos[0]; ano <= anos[1]; ano++) {
           if (ano > 2026) break;
 
-          for (const motor of motorizacoes) {
-            for (const cambio of cambios) {
+          // Passo A: Filtrar motorizações cujo ciclo de vida englobe o ano escolhido
+          const motoresValidos = motorizacoes.filter(
+            (m) => ano >= m.anos[0] && ano <= m.anos[1]
+          );
+
+          for (const mObj of motoresValidos) {
+            const motorNome = mObj.motor || mObj.nome;
+
+            // Passo B: Filtrar câmbios atrelados ao motor cujo ciclo de vida englobe o ano escolhido
+            const cambiosValidos = (mObj.cambios || []).filter(
+              (c) => ano >= c.anos[0] && ano <= c.anos[1]
+            );
+
+            for (const cObj of cambiosValidos) {
               generatedVehicles.push({
                 modelo: modelo,
                 ano: ano,
-                motorizacao: motor,
-                tipo_cambio: cambio
+                motorizacao: motorNome,
+                tipo_cambio: cObj.nome || cObj.motor
               });
             }
           }

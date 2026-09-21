@@ -27,7 +27,7 @@ describe('Vehicle API Integrations', () => {
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
     expect(response.body.length).toBeGreaterThan(0);
-    expect(response.body[0].modelo).toBe('Argo');
+    expect(response.body.some(v => v.modelo === 'Argo')).toBe(true);
   });
   it('deve criar um novo veículo (Happy Path)', async () => {
     const response = await request(app)
@@ -170,7 +170,7 @@ describe('Diagnosis API Integrations', () => {
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body.length).toBe(10);
+    expect(response.body.length).toBeLessThanOrEqual(5);
     const names = response.body.map(s => s.nome);
     expect(names).toContain('Motor falhando / perda de potência');
     expect(names).toContain('Superaquecimento do motor / luz de temperatura acesa');
