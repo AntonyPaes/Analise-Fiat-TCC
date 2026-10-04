@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   ArrowLeft, Clock, Wrench, RotateCcw, AlertTriangle, CheckCircle2,
   ChevronRight, ShoppingCart, ShieldAlert, Info, ExternalLink,
-  HardHat, TriangleAlert, Star
+  HardHat, TriangleAlert, Star, Sparkles
 } from 'lucide-react';
 
 // Mapeamento de probabilidade textual para percentual numérico
@@ -153,11 +153,72 @@ const DiagnosisResult = ({ vehicleData, diagnosisData, onBackToSymptom, onBackTo
         </button>
       </div>
 
-      {/* ── Grid Principal ───────────────────────────────────────────── */}
-      <div className="flex-1 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6">
+      {/* ── Conteúdo Principal com Parecer da IA e Grid ─────────────── */}
+      <div className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        {/* ── Coluna Esquerda: Ranking (RF003) ── */}
-        <div className="lg:col-span-4 flex flex-col gap-3">
+        {/* ── Card de Parecer Técnico Inteligente (IA Fiat) ───────────── */}
+        {currentSymptom?.parecerIA && (
+          <div className="w-full bg-gradient-to-r from-slate-900 via-zinc-900 to-slate-900 text-white rounded-2xl p-5 shadow-xl border border-slate-700/50 relative overflow-hidden">
+            {/* Efeito visual de brilho */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between gap-3 mb-3 border-b border-slate-800 pb-3 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-fiatRed to-red-700 text-white shadow-md">
+                  <Sparkles className="w-5 h-5 animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-white flex items-center gap-2">
+                    Parecer Técnico Inteligente (IA Fiat)
+                    <span className="text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">
+                      Gemini 2.5
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400">Análise sintética em linguagem clara relacionando o relato do cliente às causas do sistema</p>
+                </div>
+              </div>
+              
+              {/* Badge de Urgência */}
+              {currentSymptom.parecerIA.nivelUrgencia && (
+                <div className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 ${
+                  currentSymptom.parecerIA.nivelUrgencia === 'Alta'
+                    ? 'bg-red-500/20 text-red-400 border-red-500/40'
+                    : currentSymptom.parecerIA.nivelUrgencia === 'Média'
+                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                    : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                }`}>
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  <span>Urgência: {currentSymptom.parecerIA.nivelUrgencia}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3 text-sm leading-relaxed text-slate-200">
+              <p className="font-medium text-slate-100">
+                {currentSymptom.parecerIA.resumoExecutivo}
+              </p>
+
+              {currentSymptom.parecerIA.dicaSeguranca && (
+                <div className="flex items-start gap-2 bg-slate-800/80 p-3 rounded-xl border border-slate-700/60 text-xs text-amber-200">
+                  <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <span><strong className="text-amber-300">Orientação de Segurança:</strong> {currentSymptom.parecerIA.dicaSeguranca}</span>
+                </div>
+              )}
+
+              {currentSymptom.parecerIA.recomendacaoTecnica && (
+                <p className="text-xs text-slate-400 border-t border-slate-800/80 pt-2 italic">
+                  💡 <strong>Recomendação Concessionária Fiat:</strong> {currentSymptom.parecerIA.recomendacaoTecnica}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Grid Principal ───────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          {/* ── Coluna Esquerda: Ranking (RF003) ── */}
+          <div className="lg:col-span-4 flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-gray-100 pb-2">
             <h2 className="text-gray-800 font-bold text-base flex items-center gap-2">
               <Star className="w-4 h-4 text-fiatRed" />
@@ -450,6 +511,8 @@ const DiagnosisResult = ({ vehicleData, diagnosisData, onBackToSymptom, onBackTo
             </>
           )}
         </div>
+
+      </div>
 
       </div>
 

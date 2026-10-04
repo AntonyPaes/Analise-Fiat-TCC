@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const { Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide, SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('./models');
+const aiService = require('./services/aiService');
 
 const app = express();
 app.use(cors());
@@ -190,6 +191,20 @@ app.post('/api/vehicles/:vehicleId/diagnose', async (req, res) => {
       const symptomJson = symptomRecord.toJSON();
       symptomJson.causes = savedCauses;
       savedSymptoms.push(symptomJson);
+    }
+
+    // 6. Gerar o Parecer Técnico Inteligente via IA
+    const parecerIA = await aiService.gerarParecerDiagnostico(
+      vehicle.toJSON(),
+      description || searchTerm || '',
+      savedSymptoms
+    );
+
+    // Anexar o parecerIA nos itens retornados
+    if (savedSymptoms.length > 0) {
+      savedSymptoms.forEach((symptom) => {
+        symptom.parecerIA = parecerIA;
+      });
     }
 
     return res.status(200).json(savedSymptoms);
