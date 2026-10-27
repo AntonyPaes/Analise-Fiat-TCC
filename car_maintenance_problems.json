@@ -1,0 +1,375 @@
+[
+  {
+    "id": "01",
+    "title": "Bateria descarregada",
+    "symptoms": "O carro não dá partida, painel fraco, luzes diminuem ou estalo ao tentar ligar.",
+    "difficulty": "média",
+    "equipment": ["Cabo de transferência de carga", "Óculos de proteção", "Luvas", "Outro veículo compatível"],
+    "part_to_buy": "Cabo de transferência de carga 12V",
+    "steps": [
+      "Estacione em local seguro e desligue o motor e equipamentos elétricos.",
+      "Inspecione visualmente a bateria; se houver danos, não tente partida auxiliar.",
+      "Consulte o manual do FIAT para procedimentos e pontos de conexão.",
+      "Se permitido, conecte os cabos seguindo a sequência do fabricante, respeitando polos.",
+      "Tente a partida conforme instruções do equipamento e manual.",
+      "Desconecte os cabos na ordem recomendada.",
+      "Se o problema persistir, procure assistência para testar bateria e sistema de carga."
+    ],
+    "semantic_core": ["bateria", "partida", "energia", "cabo de partida", "segurança elétrica"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "02",
+    "title": "Lâmpada da luz de freio queimada",
+    "symptoms": "Uma luz traseira não acende ao pressionar o pedal de freio.",
+    "difficulty": "fácil a média",
+    "equipment": ["Lâmpada correta", "Luvas", "Chave Phillips ou ferramenta plástica"],
+    "part_to_buy": "Lâmpada de luz de freio (conforme especificação)",
+    "steps": [
+      "Estacione o veículo, desligue a ignição e espere a lâmpada esfriar.",
+      "Abra o porta-malas e localize o acesso à lanterna traseira.",
+      "Remova a tampa ou lanterna conforme o manual.",
+      "Solte o soquete da lâmpada queimada.",
+      "Instale a nova lâmpada do mesmo tipo e potência.",
+      "Recoloque o soquete, lanterna e tampas.",
+      "Peça a outra pessoa para acionar o freio e verifique o funcionamento."
+    ],
+    "semantic_core": ["luz de freio", "lâmpada", "manutenção", "segurança", "reparo"],
+    "led_note": "Se o conjunto for LED integrado, substituir a lanterna inteira ao invés de lâmpada."
+  },
+  {
+    "id": "03",
+    "title": "Lâmpada da seta queimada",
+    "symptoms": "Seta dianteira ou traseira não acende, ou pisca rápido no painel.",
+    "difficulty": "fácil a média",
+    "equipment": ["Lâmpada compatível", "Chave de fenda ou Phillips"],
+    "part_to_buy": "Lâmpada de seta (tipo correto)",
+    "steps": [
+      "Ligue a seta com o veículo parado e identifique a lâmpada não funcionante.",
+      "Desligue a ignição e as luzes.",
+      "Acesse o conjunto da lanterna correspondente.",
+      "Remova o soquete e a lâmpada conforme o manual.",
+      "Instale a lâmpada correta.",
+      "Monte novamente o conjunto.",
+      "Teste os dois lados e as setas dianteiras e traseiras."
+    ],
+    "semantic_core": ["seta", "lâmpada", "direção", "sinalização", "reparo elétrico"],
+    "led_note": "Para veículos com setas de LED, a peça inteira deve ser substituída."
+  },
+  {
+    "id": "04",
+    "title": "Lâmpada do farol baixo ou alto queimada",
+    "symptoms": "Farol baixo ou alto não acende de um lado.",
+    "difficulty": "",
+    "equipment": ["Lâmpada correta", "Chave ou ferramenta de acesso"],
+    "part_to_buy": "Lâmpada de farol baixo/alto (conforme manual)",
+    "steps": [
+      "Confirme se o problema está no farol baixo, alto ou ambos.",
+      "Desligue iluminação e ignição.",
+      "Aguarde o conjunto esfriar.",
+      "Abra o acesso ao farol conforme o manual.",
+      "Remova a lâmpada antiga e instale a nova especificação.",
+      "Recoloque a tampa e conectores.",
+      "Teste o farol baixo, alto e demais luzes."
+    ],
+    "semantic_core": ["farol", "luz baixa", "luz alta", "iluminação", "manutenção"],
+    "led_note": "Se o farol for módulo LED, a substituição deve ser da unidade completa."
+  },
+  {
+    "id": "05",
+    "title": "Luz de posição, lanterna traseira ou luz da placa queimada",
+    "symptoms": "Luz externa auxiliar não acende, outras funcionam.",
+    "difficulty": "",
+    "equipment": ["Lâmpada compatível", "Chave de fenda fina ou Phillips"],
+    "part_to_buy": "Lâmpada de posição/lanterna/luz da placa (tipo correto)",
+    "steps": [
+      "Identifique a iluminação que está falhando.",
+      "Desligue a ignição e as luzes.",
+      "Localize a tampa ou suporte da lâmpada.",
+      "Remova a lâmpada ou conjunto conforme o manual.",
+      "Substitua pela peça correta.",
+      "Reinstale o conjunto.",
+      "Teste todas as funções relacionadas."
+    ],
+    "semantic_core": ["luz de posição", "lanterna", "placa", "iluminação externa", "substituição"],
+    "led_note": "Para peças LED integradas, substituir a unidade completa."
+  },
+  {
+    "id": "06",
+    "title": "Luz interna do teto queimada",
+    "symptoms": "Iluminação interna não acende ao abrir a porta ou acionar interruptor.",
+    "difficulty": "",
+    "equipment": ["Lâmpada compatível", "Ferramenta plástica para acabamento"],
+    "part_to_buy": "Lâmpada de iluminação interna do teto (conforme manual)",
+    "steps": [
+      "Verifique o interruptor na posição correta.",
+      "Teste a luz pelo próprio botão, se houver.",
+      "Desligue a ignição e iluminação.",
+      "Consulte o manual para remover a tampa do plafonier sem quebrar as presilhas.",
+      "Substitua a lâmpada, se removível.",
+      "Reinstale a tampa e teste novamente."
+    ],
+    "semantic_core": ["luz interna", "teto", "cabine", "iluminação interna", "reparo"],
+    "led_note": "Caso seja iluminação LED fixa, a substituição requer troca da unidade inteira."
+  },
+  {
+    "id": "07",
+    "title": "Pneu com pressão baixa",
+    "symptoms": "Aviso de pressão, pneu murcho ou direção alterada.",
+    "difficulty": "muito fácil",
+    "equipment": ["Calibrador de pneus", "Compressor ou calibrador de posto"],
+    "part_to_buy": "Kit de calibragem de pneus (calibrador + compressor)",
+    "steps": [
+      "Estacione em local seguro.",
+      "Inspecione visualmente os quatro pneus.",
+      "Consulte a pressão recomendada na etiqueta ou manual.",
+      "Com pneus frios, retire a tampa da válvula.",
+      "Conecte o calibrador e verifique a pressão.",
+      "Complete ou libere ar até atingir a pressão recomendada.",
+      "Recoloque a tampa e repita nos demais pneus, inclusive estepe."
+    ],
+    "semantic_core": ["pneu", "pressão", "calibragem", "segurança", "manutenção"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "08",
+    "title": "Pneu furado",
+    "symptoms": "Perda rápida de ar, veículo puxando ou pneu visivelmente vazio.",
+    "difficulty": "",
+    "equipment": ["Estepe compatível", "Macaco", "Chave de roda", "Calços", "Triângulo de sinalização"],
+    "part_to_buy": "Estepe de reserva compatível",
+    "steps": [
+      "Pare em local firme, plano e afastado do trânsito.",
+      "Acione o pisca-alerta e freio de estacionamento.",
+      "Consulte o manual para pontos de apoio do macaco.",
+      "Afrouxe os parafusos da roda ainda no chão.",
+      "Posicione o macaco e eleve o veículo.",
+      "Remova a roda furada e instale o estepe.",
+      "Aperte os parafusos inicialmente conforme manual e abaixe o veículo.",
+      "Faça o aperto final conforme especificação do fabricante.",
+      "Encaminhe a roda e pneu removidos para avaliação profissional."
+    ],
+    "semantic_core": ["pneu furado", "troca de pneu", "estepe", "segurança", "macaco"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "09",
+    "title": "Palhetas do limpador de para-brisa desgastadas",
+    "symptoms": "Limpador deixa faixas, faz ruído, trepida ou não limpa adequadamente.",
+    "difficulty": "fácil",
+    "equipment": ["Palhetas novas compatíveis"],
+    "part_to_buy": "Palhetas de limpador de para-brisa (tamanho correto)",
+    "steps": [
+      "Confira o tamanho e tipo de encaixe das palhetas corretas.",
+      "Desligue o limpador e siga o manual para posição de manutenção.",
+      "Levante o braço do limpador.",
+      "Solte a palheta antiga pela trava.",
+      "Instale a nova palheta até travar.",
+      "Abaixe o braço com cuidado, evitando bater no vidro.",
+      "Use o lavador para verificar melhoria na limpeza."
+    ],
+    "semantic_core": ["palhetas", "limpador", "para-brisa", "manutenção", "visibilidade"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "10",
+    "title": "Reservatório do lavador de para-brisa vazio",
+    "symptoms": "Limpador funciona, mas não sai líquido.",
+    "difficulty": "",
+    "equipment": ["Líquido próprio para lavador", "Funil (se necessário)"],
+    "part_to_buy": "Fluido para lavador de para-brisa",
+    "steps": [
+      "Estacione o carro e desligue a ignição.",
+      "Abra o capô e localize o reservatório com símbolo do lavador.",
+      "Abra a tampa e verifique o nível.",
+      "Complete com o líquido recomendado.",
+      "Feche a tampa e o capô corretamente.",
+      "Teste o lavador por alguns segundos."
+    ],
+    "semantic_core": ["lavador", "reservatório", "líquido lavador", "manutenção", "visibilidade"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "11",
+    "title": "Para-brisa embaçado",
+    "symptoms": "Vidro opaco por dentro, principalmente em dias chuvosos.",
+    "difficulty": "",
+    "equipment": [],
+    "part_to_buy": "Nenhum (apenas procedimento)",
+    "steps": [
+      "Ligue a ventilação direcionada ao para-brisa.",
+      "Acione a função de desembaçamento.",
+      "Utilize o ar-condicionado se disponível.",
+      "Ajuste a temperatura conforme necessário.",
+      "Selecione entrada de ar externa ao invés de recirculação contínua.",
+      "Aguarde até a visibilidade estar restaurada antes de conduzir."
+    ],
+    "semantic_core": ["embaçamento", "para-brisa", "ventilação", "climatização", "segurança"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "12",
+    "title": "Bateria da chave presencial ou do controle descarregada",
+    "symptoms": "Controle não trava/destrava portas, funciona só de perto ou sinal de bateria fraca.",
+    "difficulty": "fácil",
+    "equipment": ["Bateria nova do tipo correto", "Chave de fenda pequena"],
+    "part_to_buy": "Bateria tipo CR2032 (ou especificada)",
+    "steps": [
+      "Consulte o manual para identificar o tipo de bateria.",
+      "Observe como o controle é aberto e onde estão as presilhas.",
+      "Abra cuidadosamente, evitando forçar as presilhas.",
+      "Retire a bateria antiga e observe os polos.",
+      "Instale a nova bateria respeitando a polaridade.",
+      "Feche o controle e teste travamento e destravamento."
+    ],
+    "semantic_core": ["bateria da chave", "controle remoto", "troca de bateria", "eletrônica", "manutenção"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "13",
+    "title": "Filtro de cabine sujo",
+    "symptoms": "Ar‑condicionado sopra menos ar, cheiro desagradável ou poeira no sistema.",
+    "difficulty": "",
+    "equipment": ["Filtro de cabine compatível", "Chave de fenda ou ferramenta de acabamento"],
+    "part_to_buy": "Filtro de cabine (OEM)",
+    "steps": [
+      "Desligue a ventilação e a ignição.",
+      "Localize o filtro (geralmente atrás do porta‑luvas).",
+      "Remova a tampa de acesso e travas necessárias.",
+      "Retire o filtro antigo, observando a direção do fluxo de ar.",
+      "Instale o filtro novo na orientação correta.",
+      "Recoloque a tampa e peças removidas.",
+      "Ligue a ventilação e verifique melhora no fluxo."
+    ],
+    "semantic_core": ["filtro de cabine", "ar‑condicionado", "qualidade do ar", "troca de filtro"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "14",
+    "title": "Filtro de ar do motor sujo",
+    "symptoms": "Nenhum aviso específico, mas pode afetar desempenho.",
+    "difficulty": "",
+    "equipment": ["Filtro de ar correto", "Chave Phillips, chave de soquete ou nenhuma ferramenta"],
+    "part_to_buy": "Filtro de ar do motor (OEM)",
+    "steps": [
+      "Estacione, desligue o motor e aguarde esfriar.",
+      "Localize a caixa do filtro de ar conforme manual.",
+      "Solte as presilhas ou parafusos.",
+      "Abra a caixa sem danificar mangueiras ou conectores.",
+      "Retire o filtro antigo e verifique sujeira no compartimento.",
+      "Instale o filtro novo respeitando o encaixe.",
+      "Feche a caixa e verifique travas."
+    ],
+    "semantic_core": ["filtro de ar", "motor", "performance", "manutenção", "troca de filtro"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "15",
+    "title": "Nível de óleo do motor baixo",
+    "symptoms": "Nível abaixo da marca mínima ou aviso de nível de óleo.",
+    "difficulty": "",
+    "equipment": ["Óleo especificado", "Funil", "Pano limpo"],
+    "part_to_buy": "Óleo de motor (especificação do manual)",
+    "steps": [
+      "Estacione em superfície plana e desligue o motor.",
+      "Aguarde o tempo indicado no manual para medição.",
+      "Retire a vareta, limpe, reinsira e confira o nível.",
+      "Se necessário, adicione pequena quantidade de óleo especificado.",
+      "Aguarde e meça novamente.",
+      "Repita até atingir faixa recomendada entre marcas mínima e máxima.",
+      "Feche a tampa de abastecimento e verifique se não há derramamento."
+    ],
+    "semantic_core": ["óleo do motor", "nível de óleo", "manutenção", "lubrificação", "segurança"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "16",
+    "title": "Nível baixo do líquido de arrefecimento",
+    "symptoms": "Nível do reservatório abaixo da marca mínima ou alerta de temperatura.",
+    "difficulty": "",
+    "equipment": ["Líquido de arrefecimento aprovado", "Funil (se necessário)"],
+    "part_to_buy": "Líquido de arrefecimento (tipo correto)",
+    "steps": [
+      "Estacione e desligue o motor.",
+      "Espere o motor esfriar completamente.",
+      "Localize o reservatório de expansão e confira as marcas de nível.",
+      "Se baixo, verifique no manual o líquido correto.",
+      "Com o motor frio, complete conforme especificação e limite indicado.",
+      "Feche a tampa corretamente.",
+      "Observe se o nível volta a baixar ou há vazamentos visíveis."
+    ],
+    "semantic_core": ["líquido de arrefecimento", "refrigeração", "manutenção", "nível", "segurança"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "17",
+    "title": "Fusível de um equipamento queimado",
+    "symptoms": "Tomada de 12 V, luz ou outro equipamento elétrico deixa de funcionar.",
+    "difficulty": "",
+    "equipment": ["Fusível compatível", "Pinça para fusíveis", "Manual do proprietário"],
+    "part_to_buy": "Fusível (amperagem correta)",
+    "steps": [
+      "Desligue a ignição e o equipamento afetado.",
+      "Consulte o manual para identificar a caixa de fusíveis e circuito.",
+      "Verifique se a substituição é permitida ao proprietário.",
+      "Com o circuito desligado, retire o fusível conforme orientações.",
+      "Cheque se está danificado e substitua pelo mesmo tipo e amperagem.",
+      "Teste o equipamento após substituição."
+    ],
+    "semantic_core": ["fusível", "elétrico", "substituição", "proteção", "manutenção"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "18",
+    "title": "Carro não liga por causa simples",
+    "symptoms": "Veículo não dá partida sem evidência clara de bateria descarregada.",
+    "difficulty": "",
+    "equipment": [],
+    "part_to_buy": "Nenhum (apenas procedimento)",
+    "steps": [
+      "Verifique combustível suficiente.",
+      "Em câmbio automático, confirme alavanca em posição permitida (P ou N).",
+      "Em câmbio manual, pressione a embreagem se necessário.",
+      "Verifique reconhecimento da chave pelo veículo.",
+      "Se houver segunda chave, teste com ela.",
+      "Observe avisos no painel e se o motor de partida gira.",
+      "Se persistir, procure assistência para diagnóstico."
+    ],
+    "semantic_core": ["não liga", "partida", "verificações iniciais", "combustível", "ignição"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "19",
+    "title": "Câmera de ré ou sensores de estacionamento sujos",
+    "symptoms": "Imagem embaçada, alertas incorretos ou sensores não reconhecem obstáculos.",
+    "difficulty": "",
+    "equipment": ["Pano de microfibra", "Água ou produto de limpeza adequado"],
+    "part_to_buy": "Pano de microfibra (para limpeza)",
+    "steps": [
+      "Estacione o veículo e desligue a ignição.",
+      "Localize a câmera e sensores externos.",
+      "Remova suavemente poeira, barro e resíduos usando o pano.",
+      "Evite objetos pontiagudos, produtos abrasivos ou jatos de alta pressão.",
+      "Ligue o veículo e teste o sistema em ambiente seguro."
+    ],
+    "semantic_core": ["câmera de ré", "sensores de estacionamento", "limpeza", "visibilidade", "manutenção"],
+    "led_note": "N/A"
+  },
+  {
+    "id": "20",
+    "title": "Motor vibra muito no neutro ou parado",
+    "symptoms": "Vibração forte percebida ao colocar o câmbio em neutro ou quando o carro está parado, inclusive ao soltar a embreagem.",
+    "difficulty": "média",
+    "equipment": ["Chave de soquete", "Macaco", "Suporte de elevação", "Ferramentas de aperto"],
+    "part_to_buy": "Coxim do motor (original ou equivalente)",
+    "steps": [
+      "Estacione em superfície plana, desligue a ignição e aplique o freio de estacionamento.",
+      "Eleve o veículo com macaco e suporte de segurança.",
+      "Remova o coxim antigo observando o ponto de montagem.",
+      "Instale o novo coxim garantindo o aperto correto dos parafusos conforme manual.",
+      "Baixe o veículo, faça a partida e verifique se a vibração desapareceu."
+    ],
+    "semantic_core": ["coxim do motor", "vibração", "neutro", "parado", "troca de coxim"],
+    "led_note": "N/A"
+  }
+]
