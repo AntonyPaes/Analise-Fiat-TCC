@@ -1,7 +1,3 @@
-/**
- * Script de reset: trunca a tabela vehicle_catalogs e re-executa o seed.
- * Uso: node config/reset_vehicle_catalog.js
- */
 const sequelize = require('./database');
 const VehicleCatalog = require('../models/VehicleCatalog');
 const seedDatabase = require('./seed');

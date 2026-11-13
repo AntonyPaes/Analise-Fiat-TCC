@@ -24,7 +24,7 @@ const SymptomCatalog = sequelize.define('SymptomCatalog', {
     allowNull: false,
   },
   keywords: {
-    type: DataTypes.TEXT, // armazenado como JSON stringificado
+    type: DataTypes.TEXT,
     allowNull: true,
     get() {
       const raw = this.getDataValue('keywords');

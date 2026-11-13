@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 
-const { Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide, SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('./models');
-const aiService = require('./services/aiService');
+const { sequelize, Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide, SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('./models');
+const { rankDiagnosis } = require('./services/diagnosisService');
 
 const app = express();
 app.use(cors());
@@ -23,10 +23,16 @@ app.get('/api/vehicles/options', async (req, res) => {
 
 app.post('/api/vehicles', async (req, res) => {
   try {
-    const { modelo, ano, motorizacao, quilometragem, tipo_cambio } = req.body;
+    const { modelo, ano, motorizacao, quilometragem, tipo_cambio } = req.body || {};
     
-    if (!modelo || !ano || !motorizacao || !quilometragem || !tipo_cambio) {
+    if ([modelo, motorizacao, tipo_cambio].some(value => typeof value !== 'string' || !value.trim())
+      || ano == null || quilometragem == null) {
       return res.status(400).json({ error: 'Todos os campos do veículo são obrigatórios.' });
+    }
+
+    if (!Number.isInteger(ano) || ano < 1 || ano > 9999
+      || !Number.isInteger(quilometragem) || quilometragem < 0) {
+      return res.status(400).json({ error: 'Ano deve ser um inteiro válido e quilometragem deve ser um inteiro não negativo.' });
     }
 
     const vehicle = await Vehicle.create({
@@ -43,7 +49,6 @@ app.post('/api/vehicles', async (req, res) => {
   }
 });
 
-// Rota para retornar o catálogo completo de sintomas (usado para autocompletar no frontend)
 app.get('/api/symptoms/catalog', async (req, res) => {
   try {
     const symptomsCatalog = await SymptomCatalog.findAll({
@@ -55,23 +60,21 @@ app.get('/api/symptoms/catalog', async (req, res) => {
   }
 });
 
-// Rota de diagnóstico para interpretar o relato do usuário
 app.post('/api/vehicles/:vehicleId/diagnose', async (req, res) => {
   try {
     const { vehicleId } = req.params;
     const { selectedCategory, searchTerm, description } = req.body;
 
-    if (!selectedCategory) {
-      return res.status(400).json({ error: 'A categoria do sintoma é obrigatória.' });
+    const report = [description, searchTerm].filter((value) => typeof value === 'string' && value.trim()).join(' ');
+    if (!report) {
+      return res.status(400).json({ error: 'Descreva ou pesquise pelo menos um sintoma.' });
     }
 
-    // 1. Validar se o veículo existe no banco de dados
     const vehicle = await Vehicle.findByPk(vehicleId);
     if (!vehicle) {
       return res.status(404).json({ error: 'Veículo não encontrado.' });
     }
 
-    // 2. Carregar o catálogo de referência do banco de dados
     const symptomsCatalogRaw = await SymptomCatalog.findAll({
       include: [
         {
@@ -89,88 +92,43 @@ app.post('/api/vehicles/:vehicleId/diagnose', async (req, res) => {
     
     const symptomsCatalog = symptomsCatalogRaw.map(s => s.get({ plain: true }));
 
-    // Função de normalização simples para busca textual insensível a acentos e maiúsculas
-    // Função de normalização com remoção de pontuação para divisão de palavras
-    const normalizeText = (text) => {
-      if (!text) return '';
-      return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // remove acentos
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, ' ') // substitui pontuações por espaço
-        .replace(/\s+/g, ' ') // remove espaços duplicados
-        .trim();
-    };
-
-    const rawInput = (description || '') + ' ' + (searchTerm || '');
-    const userInput = normalizeText(rawInput);
-    const userWords = userInput.split(' ');
-
-    // 3. Filtrar os sintomas do catálogo pela categoria selecionada
-    const categorySymptoms = symptomsCatalog.filter(
-      (symptom) => symptom.categoria.toLowerCase() === selectedCategory.toLowerCase()
-    );
-
-    // 4. Executar algoritmo de interpretação textual por pontuação de palavras-chave
-    const scoredSymptoms = categorySymptoms.map((symptom) => {
-      let score = 0;
-      symptom.keywords.forEach((keyword) => {
-        const normalizedKeyword = normalizeText(keyword);
-        
-        if (normalizedKeyword.includes(' ')) {
-          // Se for uma frase-chave (múltiplas palavras), verifica a presença direta na string
-          if (userInput.includes(normalizedKeyword)) {
-            score += 2; // Maior peso para correspondência de frase exata
-          }
-        } else {
-          // Se for uma palavra-chave individual, faz a correspondência exata de palavra inteira
-          if (userWords.includes(normalizedKeyword)) {
-            score += 1;
-          }
-        }
-      });
-      return { symptom, score };
+    const ranked = rankDiagnosis({
+      catalog: symptomsCatalog,
+      query: report,
+      selectedCategory,
+      vehicle: vehicle.toJSON(),
+      limit: 5
     });
 
-    // Ordenar de forma decrescente pela pontuação
-    scoredSymptoms.sort((a, b) => b.score - a.score);
+    if (ranked.length === 0) return res.status(200).json([]);
 
-    // Selecionar sintomas que tiveram pelo menos uma palavra-chave combinada
-    let matchedSymptoms = scoredSymptoms
-      .filter((item) => item.score > 0)
-      .map((item) => item.symptom);
+    const results = await sequelize.transaction(async (transaction) => {
+      const savedSymptomsByCatalogId = new Map();
+      const results = [];
+      for (const candidate of ranked) {
+        let symptomRecord = savedSymptomsByCatalogId.get(candidate.symptom.id);
+        if (!symptomRecord) {
+          symptomRecord = await Symptom.create({
+            nome: candidate.symptom.nome,
+            descricao: candidate.symptom.descricao,
+            codigo_obd: /^[PCBU][0-9A-F]{4}$/i.test(candidate.symptom.codigo_obd || '')
+              ? candidate.symptom.codigo_obd
+              : null,
+            status: 'Pendente',
+            vehicleId: parseInt(vehicleId, 10)
+          }, { transaction });
+          savedSymptomsByCatalogId.set(candidate.symptom.id, symptomRecord);
+        }
 
-    // Fallback: Se nenhum termo coincidiu, apresentar todas as opções da categoria
-    if (matchedSymptoms.length === 0) {
-      matchedSymptoms = categorySymptoms;
-    }
-
-    // RF003: Limitar o resultado a no máximo 5 possíveis causas
-    matchedSymptoms = matchedSymptoms.slice(0, 5);
-
-
-    // 5. Salvar a árvore de diagnóstico (Symptom -> Cause -> RepairGuide) no banco de dados vinculada ao veículo
-    const savedSymptoms = [];
-    for (const catSymptom of matchedSymptoms) {
-      const symptomRecord = await Symptom.create({
-        nome: catSymptom.nome,
-        descricao: catSymptom.descricao,
-        codigo_obd: catSymptom.codigo_obd,
-        status: 'Pendente',
-        vehicleId: parseInt(vehicleId, 10)
-      });
-
-      const savedCauses = [];
-      for (const catCause of catSymptom.causes) {
         const causeRecord = await Cause.create({
-          nome: catCause.nome,
-          descricao: catCause.descricao,
-          probabilidade: catCause.probabilidade,
+          nome: candidate.causeName,
+          descricao: candidate.causeDescription,
+          probabilidade: null,
           symptomId: symptomRecord.id
-        });
+        }, { transaction });
 
         const savedGuides = [];
-        for (const catGuide of catCause.repairGuides) {
+        for (const catGuide of candidate.cause.repairGuides || []) {
           const guideRecord = await RepairGuide.create({
             titulo: catGuide.titulo,
             descricao: catGuide.descricao,
@@ -179,35 +137,31 @@ app.post('/api/vehicles/:vehicleId/diagnose', async (req, res) => {
             dificuldade: catGuide.dificuldade,
             ferramentas: catGuide.ferramentas,
             causeId: causeRecord.id
-          });
+          }, { transaction });
           savedGuides.push(guideRecord.toJSON());
         }
 
-        const causeJson = causeRecord.toJSON();
-        causeJson.repairGuides = savedGuides;
-        savedCauses.push(causeJson);
+        results.push({
+          ...symptomRecord.toJSON(),
+          hypothesisId: causeRecord.id,
+          causes: [{ ...causeRecord.toJSON(), repairGuides: savedGuides }],
+          match: {
+            confidence: candidate.confidence,
+            evidence: candidate.evidence,
+            vehicleFit: candidate.vehicleFit,
+            categoryMismatch: candidate.categoryMismatch,
+            category: candidate.category,
+            componentToCheck: candidate.isComponentList,
+            purchaseRecommended: candidate.purchaseRecommended,
+            purchaseParts: candidate.purchaseParts,
+            lightingNotice: candidate.lightingNotice
+          }
+        });
       }
+      return results;
+    });
 
-      const symptomJson = symptomRecord.toJSON();
-      symptomJson.causes = savedCauses;
-      savedSymptoms.push(symptomJson);
-    }
-
-    // 6. Gerar o Parecer Técnico Inteligente via IA
-    const parecerIA = await aiService.gerarParecerDiagnostico(
-      vehicle.toJSON(),
-      description || searchTerm || '',
-      savedSymptoms
-    );
-
-    // Anexar o parecerIA nos itens retornados
-    if (savedSymptoms.length > 0) {
-      savedSymptoms.forEach((symptom) => {
-        symptom.parecerIA = parecerIA;
-      });
-    }
-
-    return res.status(200).json(savedSymptoms);
+    return res.status(200).json(results);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

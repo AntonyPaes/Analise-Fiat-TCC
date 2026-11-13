@@ -1,8 +1,5 @@
 const { GoogleGenAI } = require('@google/genai');
 
-/**
- * Serviço de Inteligência Artificial para a plataforma AnaliseFiat
- */
 class AiService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY;
@@ -13,12 +10,7 @@ class AiService {
     }
   }
 
-  /**
-   * Gera um parecer analítico inteligente (resumo explicativo, urgência, orientações)
-   * baseado no veículo, no relato do cliente e nos sintomas encontrados.
-   */
   async gerarParecerDiagnostico(veiculo, relatoCliente, sintomasDiagnosticados) {
-    // Tenta usar a API do Gemini se a chave estiver configurada
     if (this.apiKey) {
       try {
         if (!this.ai) {
@@ -70,13 +62,9 @@ class AiService {
       }
     }
 
-    // Fallback inteligente (executado quando offline, sem chave API ou em caso de falha da API)
     return this.gerarParecerFallback(veiculo, relatoCliente, sintomasDiagnosticados);
   }
 
-  /**
-   * Fallback inteligente baseado em regras heurísticas para manter a aplicação 100% funcional sem API Key.
-   */
   gerarParecerFallback(veiculo, relatoCliente, sintomasDiagnosticados) {
     const primeiroSintoma = sintomasDiagnosticados[0];
     const primeiraCausa = primeiroSintoma?.causes?.[0];

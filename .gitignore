@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.restore-point/
+.vscode/
+**/coverage/
+*.session.sql
+backend/tests/results*.json

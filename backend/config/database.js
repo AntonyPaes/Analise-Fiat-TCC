@@ -6,7 +6,7 @@ const env = process.env.NODE_ENV || 'development';
 let sequelize;
 
 if (env === 'test') {
-  sequelize = new Sequelize('sqlite::memory:', { logging: false });
+  sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
 } else {
   sequelize = new Sequelize(
     process.env.DB_NAME || 'fiat_db',

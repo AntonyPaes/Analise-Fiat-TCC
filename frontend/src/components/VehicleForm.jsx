@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CarFront, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const VehicleForm = ({ onNext }) => {
@@ -127,10 +127,9 @@ const VehicleForm = ({ onNext }) => {
   const selectClass = "w-full bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-fiatRed/20 focus:border-fiatRed block transition-all duration-200 outline-none shadow-sm hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed text-[clamp(0.8rem,1.2vw,1rem)] p-[clamp(0.5rem,1vh,0.85rem)]";
 
   return (
-    <div className="flex-1 w-full bg-white flex flex-col overflow-y-auto">
-      <div className="flex-1 w-full max-w-5xl mx-auto flex flex-col justify-between px-[4vw] py-[4vh]">
+    <div className="screen-root vehicle-screen flex-1 w-full bg-white flex flex-col overflow-y-auto">
+      <div className="screen-content flex-1 w-full max-w-5xl mx-auto flex flex-col justify-between px-[4vw] py-[4vh]">
 
-        {/* Header */}
         <div className="text-center" style={{ marginBottom: 'clamp(1rem, 3vh, 2.5rem)' }}>
           <h1 className="font-bold text-fiatDark flex items-center justify-center gap-3 mb-2"
               style={{ fontSize: 'clamp(1.4rem, 3vw, 2.5rem)' }}>
@@ -156,7 +155,6 @@ const VehicleForm = ({ onNext }) => {
           </p>
         </div>
 
-        {/* Alert */}
         {status.message && (
           <div className={`flex items-center gap-3 font-medium rounded-xl border ${
             status.type === 'error' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-600 border-green-200'
@@ -166,18 +164,15 @@ const VehicleForm = ({ onNext }) => {
           </div>
         )}
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between" style={{ gap: 'clamp(1rem, 3vh, 2rem)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1rem, 2.5vh, 2rem)' }}>
 
-            {/* Título Seção */}
             <div className="flex items-center gap-2 text-fiatRed font-semibold border-b border-gray-100"
                  style={{ paddingBottom: 'clamp(0.4rem, 0.8vh, 0.75rem)', fontSize: 'clamp(0.85rem, 1.3vw, 1.1rem)' }}>
               <CarFront style={{ width: 'clamp(1rem, 1.5vw, 1.3rem)', height: 'clamp(1rem, 1.5vw, 1.3rem)' }} />
               <h2>Especificações do Veículo</h2>
             </div>
 
-            {/* Grid Modelo / Ano */}
             <div className="grid grid-cols-2" style={{ gap: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               <div>
                 <label className="block font-medium text-gray-700" style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.95rem)', marginBottom: 'clamp(0.3rem, 0.6vh, 0.5rem)' }}>Modelo</label>
@@ -195,7 +190,6 @@ const VehicleForm = ({ onNext }) => {
               </div>
             </div>
 
-            {/* Grid Motorização / Câmbio */}
             <div className="grid grid-cols-2" style={{ gap: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               <div>
                 <label className="block font-medium text-gray-700" style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.95rem)', marginBottom: 'clamp(0.3rem, 0.6vh, 0.5rem)' }}>Motorização</label>
@@ -213,7 +207,6 @@ const VehicleForm = ({ onNext }) => {
               </div>
             </div>
 
-            {/* Quilometragem */}
             <div>
               <label className="block font-medium text-gray-700" style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.95rem)', marginBottom: 'clamp(0.3rem, 0.6vh, 0.5rem)' }}>Quilometragem (km)</label>
               <input
@@ -229,7 +222,6 @@ const VehicleForm = ({ onNext }) => {
             </div>
           </div>
 
-          {/* Botão */}
           <button
             type="submit"
             disabled={loading}

@@ -1,5 +1,4 @@
 module.exports = [
-  // ── MOTOR ──────────────────────────────────────────────────────────────────
   {
     nome: "Motor falhando / perda de potência",
     descricao: "O motor apresenta falhas na aceleração, engasgos e perda perceptível de rendimento.",
@@ -81,7 +80,6 @@ module.exports = [
     causes: [{ nome: "Juntas ou retentores de óleo desgastados", descricao: "Com o tempo, as gaxetas e retentores endurecem e perdem a vedação.", probabilidade: "Alta", repairGuides: [{ titulo: "Identificação e troca de junta/retentor de óleo", descricao: "Localizar a origem do vazamento e substituir a peça.", passos: "1. Limpe o motor com desengraxante.\n2. Marque em papel onde está o vazamento.\n3. Depois de rodar, identifique a origem exata.\n4. Troque a gaxeta ou retentor da área identificada.", tempo_estimado: "1-3 horas", dificuldade: "Mediano", ferramentas: "Desengraxante, junta/retentor novo, chaves combinadas" }] }]
   },
 
-  // ── FREIOS ─────────────────────────────────────────────────────────────────
   {
     nome: "Barulho de atrito metálico ao frear",
     descricao: "Ruído estridente ou de raspagem metálica ao pressionar o pedal com o veículo em movimento.",
@@ -147,7 +145,6 @@ module.exports = [
     causes: [{ nome: "Pinça de freio travada deixando pastilha em contato com disco", descricao: "Com a pinça presa, o freio fica parcialmente acionado o tempo todo, gerando calor excessivo.", probabilidade: "Alta", repairGuides: [{ titulo: "Inspeção e liberação de pinça travada", descricao: "Verificar e desbloquear a pinça de freio superaquecida.", passos: "1. Pare o carro em local seguro e aguarde esfriar.\n2. Eleve o carro e remova a roda quente.\n3. Inspecione se o disco está excessivamente quente.\n4. Tente girar o disco manualmente: resistência = pinça presa.\n5. Remova, limpe e libere o pistão ou substitua a pinça.", tempo_estimado: "60 minutos", dificuldade: "Mediano", ferramentas: "Macaco, cavaletes, sargento de freio, fluido DOT 4" }] }]
   },
 
-  // ── SUSPENSÃO ──────────────────────────────────────────────────────────────
   {
     nome: "Barulho de batida seca ao passar por buracos",
     descricao: "Ruído surdo de impacto na suspensão dianteira ao trafegar por vias irregulares.",
@@ -213,7 +210,6 @@ module.exports = [
     causes: [{ nome: "Nível baixo de óleo de direção hidráulica ou correia da bomba frouxa", descricao: "Sem óleo suficiente, a bomba de direção não gera pressão adequada.", probabilidade: "Alta", repairGuides: [{ titulo: "Verificação do nível de óleo de direção e correia", descricao: "Completar o óleo e inspecionar a correia da bomba de direção.", passos: "1. Localize o reservatório da direção hidráulica no motor.\n2. Verifique o nível entre MIN e MAX.\n3. Complete com óleo para direção hidráulica correto.\n4. Inspecione a correia dentada da bomba: se frouxa, regule ou troque.", tempo_estimado: "15 minutos", dificuldade: "Fácil", ferramentas: "Óleo de direção hidráulica, funil" }] }]
   },
 
-  // ── ELÉTRICA ───────────────────────────────────────────────────────────────
   {
     nome: "O motor não gira ao girar a chave (clique único)",
     descricao: "Ao dar a partida, o motor de arranque não aciona, o painel pisca e ouve-se apenas um clique.",
@@ -287,7 +283,6 @@ module.exports = [
     causes: [{ nome: "Palheta desgastada ou motor do limpador com falha", descricao: "A borracha da palheta ressecou e não veda; ou o motor parou de funcionar.", probabilidade: "Alta", repairGuides: [{ titulo: "Troca das palhetas do limpador", descricao: "Substituir as borrachas das palhetas do para-brisa.", passos: "1. Eleve o braço do limpador.\n2. Localize a trava de encaixe da palheta no braço.\n3. Pressione a trava e deslize a palheta antiga para baixo.\n4. Encaixe a nova palheta no gancho e trave.\n5. Se o motor não funcionar, verifique o fusível e teste o motor com 12V direto.", tempo_estimado: "10 minutos", dificuldade: "Fácil", ferramentas: "Palhetas novas compatíveis" }] }]
   },
 
-  // ── TRANSMISSÃO ────────────────────────────────────────────────────────────
   {
     nome: "Câmbio manual duro de engatar / marcha dificil",
     descricao: "As marchas do câmbio manual exigem força excessiva ou não engatam suavemente.",

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import VehicleForm from './components/VehicleForm';
 import SymptomReportForm from './components/SymptomReportForm';
 import DiagnosisResult from './components/DiagnosisResult';
 
 function App() {
-  const [currentStep, setCurrentStep] = useState('vehicle'); // 'vehicle' | 'symptom' | 'diagnosis'
+  const [currentStep, setCurrentStep] = useState('vehicle');
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [diagnosisResults, setDiagnosisResults] = useState([]);
 
@@ -33,7 +33,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-fiatGray to-gray-200 overflow-hidden">
+    <div className="app-shell h-screen flex flex-col bg-gradient-to-br from-fiatGray to-gray-200 overflow-hidden">
       {currentStep === 'vehicle' && (
         <VehicleForm onNext={handleVehicleSelected} />
       )}

@@ -1,10 +1,3 @@
-/**
- * populate_tcc.js
- * Script dedicado para limpar e repopular o catálogo de sintomas
- * com os 594 problemas extraídos da Base TCC - Auxílio ao Diagnóstico Fiat.
- *
- * Uso: node config/populate_tcc.js
- */
 
 require('dotenv').config();
 
@@ -17,18 +10,15 @@ async function populateTccCatalog() {
     console.log('🔌 Conectando ao banco de dados...');
     await sequelize.authenticate();
 
-    // Assegurar que as tabelas existem (sem dropar outras tabelas)
     await SymptomCatalog.sync();
     await CauseCatalog.sync();
     await RepairGuideCatalog.sync();
 
-    // Contar registros existentes
     const existingCount = await SymptomCatalog.count();
     console.log(`ℹ️  Catálogo atual: ${existingCount} sintomas registrados.`);
 
     if (existingCount > 0) {
       console.log('🗑️  Limpando catálogo antigo...');
-      // Deletar na ordem correta por foreign key
       await RepairGuideCatalog.destroy({ where: {} });
       await CauseCatalog.destroy({ where: {} });
       await SymptomCatalog.destroy({ where: {} });

@@ -1,7 +1,6 @@
 const VehicleCatalog = require('../models/VehicleCatalog');
 const { SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('../models');
 
-// Usa a Base TCC (594 registros) se disponível, senão usa o catálogo original como fallback
 let symptomsCatalogData;
 try {
   symptomsCatalogData = require('./tcc_symptoms.json');
@@ -257,7 +256,8 @@ const fiatBaseModels = [
           { nome: 'Manual', anos: [2016, 2019] },
           { nome: 'Automático 9 Marchas', anos: [2016, 2026] }
         ]
-      }
+      },
+      { motor: '2.2 Turbodiesel', anos: [2026, 2026], cambios: [{ nome: 'Automático 9 Marchas', anos: [2026, 2026] }] }
     ]
   },
   {
@@ -359,7 +359,6 @@ const fiatBaseModels = [
 
 async function seedDatabase() {
   try {
-    // 1. Seed fiatBaseModels into VehicleCatalog
     const count = await VehicleCatalog.count();
     if (count === 0) {
       console.log('🌱 Gerando combinações de veículos FIAT de 2008 até 2026 para o catálogo...');
@@ -370,7 +369,6 @@ async function seedDatabase() {
         for (let ano = anos[0]; ano <= anos[1]; ano++) {
           if (ano > 2026) break;
 
-          // Passo A: Filtrar motorizações cujo ciclo de vida englobe o ano escolhido
           const motoresValidos = motorizacoes.filter(
             (m) => ano >= m.anos[0] && ano <= m.anos[1]
           );
@@ -378,7 +376,6 @@ async function seedDatabase() {
           for (const mObj of motoresValidos) {
             const motorNome = mObj.motor || mObj.nome;
 
-            // Passo B: Filtrar câmbios atrelados ao motor cujo ciclo de vida englobe o ano escolhido
             const cambiosValidos = (mObj.cambios || []).filter(
               (c) => ano >= c.anos[0] && ano <= c.anos[1]
             );
@@ -402,7 +399,10 @@ async function seedDatabase() {
       console.log('ℹ️ O catálogo de veículos já possui registros. Pulando.');
     }
 
-    // 2. Seed symptomsCatalogData into SymptomCatalog
+    await VehicleCatalog.findOrCreate({ where: {
+      modelo: 'Toro', ano: 2026, motorizacao: '2.2 Turbodiesel', tipo_cambio: 'Automático 9 Marchas'
+    } });
+
     const symptomCount = await SymptomCatalog.count();
     if (symptomCount === 0) {
       console.log(`🌱 Gerando catálogo de sintomas (${symptomsCatalogData.length} registros) no banco de dados...`);

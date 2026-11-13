@@ -108,19 +108,16 @@ for cat_name, start_idx, end_idx in category_ranges:
             evidencia = fields_data.get("Nível de evidência", "Condição mecânica/elétrica possível")
             fonte = fields_data.get("Fonte / observação", "Estimativa técnica geral; manual de serviço Fiat")
             
-            # Keywords inteligentes
             tokens = set()
             tokens.update(normalize_text_for_tokens(title))
             tokens.update(normalize_text_for_tokens(pecas_prov))
             tokens.add(cat_name.lower())
             tokens.add(fiat_id.lower())
             
-            # Se for específico de algum modelo
             for model in ['argo', 'cronos', 'mobi', 'pulse', 'fastback', 'strada', 'toro', 'freemont', 'palio', 'uno', 'siena', 'punto']:
                 if model in aplicacao.lower() or model in title.lower():
                     tokens.add(model)
             
-            # Mapeamento para estrutura de catálogo do AnaliseFiat
             symptom_item = {
                 "codigo_fiat": fiat_id,
                 "codigo_obd": fiat_id,

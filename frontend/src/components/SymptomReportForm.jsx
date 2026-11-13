@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Gauge, Disc, MoveVertical, Zap, ChevronRight, AlertCircle, Wrench } from 'lucide-react';
 
 const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
@@ -8,7 +8,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Estados para autocompletar sugestões de sintomas
   const [catalog, setCatalog] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -98,10 +97,9 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
   const inputClass = "w-full bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-fiatRed/20 focus:border-fiatRed block transition-all duration-200 outline-none shadow-sm hover:border-gray-400 text-[clamp(0.8rem,1.2vw,1rem)] p-[clamp(0.5rem,1vh,0.85rem)]";
 
   return (
-    <div className="flex-1 w-full bg-white flex flex-col overflow-y-auto">
+    <div className="screen-root symptom-screen flex-1 w-full bg-white flex flex-col overflow-y-auto">
 
-      {/* Header Vermelho — largura total */}
-      <div className="w-full bg-fiatRed text-white flex items-center justify-between relative"
+      <div className="screen-header w-full bg-fiatRed text-white flex items-center justify-between relative"
            style={{ padding: 'clamp(0.75rem, 1.8vh, 1.25rem) clamp(1rem, 3vw, 2.5rem)' }}>
         <button
           type="button"
@@ -118,10 +116,9 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
         </h1>
       </div>
 
-      {/* Conteúdo centralizado */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 w-full max-w-5xl mx-auto flex flex-col justify-between"
+        className="screen-content flex-1 w-full max-w-5xl mx-auto flex flex-col justify-between"
         style={{ padding: 'clamp(1.5rem, 4vh, 3rem) clamp(1.5rem, 4vw, 4rem)', gap: 'clamp(1rem, 3vh, 2.5rem)' }}
       >
         {error && (
@@ -131,10 +128,8 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
             <span>{error}</span>
           </div>
         )}
-        {/* Corpo dos campos */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1rem, 2.5vh, 2rem)' }}>
 
-          {/* Seção 1: Pesquisa */}
           <div>
             <label className="block font-semibold text-gray-800" style={{ fontSize: 'clamp(0.8rem, 1.2vw, 1rem)', marginBottom: 'clamp(0.35rem, 0.8vh, 0.6rem)' }}>
               Pesquise por sintomas
@@ -156,7 +151,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
                 className={inputClass}
                 style={{ paddingLeft: 'clamp(2.5rem, 3.5vw, 3rem)' }}
               />
-              {/* Dropdown de sugestões */}
               {showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
                   {filteredSuggestions.map((item, idx) => (
@@ -185,7 +179,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
             </div>
           </div>
 
-          {/* Seção 2: Categorias */}
           <div>
             <label className="block font-semibold text-gray-800" style={{ fontSize: 'clamp(0.8rem, 1.2vw, 1rem)', marginBottom: 'clamp(0.35rem, 0.8vh, 0.6rem)' }}>
               Ou selecione uma categoria
@@ -215,7 +208,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
             </div>
           </div>
 
-          {/* Seção 3: Descrição */}
           <div>
             <label className="block font-semibold text-gray-800" style={{ fontSize: 'clamp(0.8rem, 1.2vw, 1rem)', marginBottom: 'clamp(0.35rem, 0.8vh, 0.6rem)' }}>
               Descreva o problema com suas palavras
@@ -230,7 +222,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
           </div>
         </div>
 
-        {/* Botão */}
         <button
           type="submit"
           disabled={loading}
@@ -249,7 +240,6 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
         </button>
       </form>
 
-      {/* Rodapé */}
       <div className="w-full bg-fiatDark text-white text-center font-bold tracking-tight uppercase border-t border-gray-800"
            style={{ padding: 'clamp(0.5rem, 1.2vh, 0.85rem)', fontSize: 'clamp(0.6rem, 0.9vw, 0.8rem)' }}>
         AVISO: ESTE SISTEMA NÃO REALIZA DIAGNÓSTICO, APENAS ORIENTAÇÃO TÉCNICA ESPECIALIZADA.

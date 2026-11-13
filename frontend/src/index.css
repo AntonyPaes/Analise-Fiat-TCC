@@ -1,15 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-fiatRed: #E4002B;
-  --color-fiatDark: #1C1C1C;
-  --color-fiatGray: #F5F5F5;
-  --color-fiatInput: #EAEAEA;
-  
+  --color-fiatRed: #C8102E;
+  --color-fiatDark: #101114;
+  --color-fiatGray: #F5F6F8;
+  --color-fiatInput: #E9ECF0;
   --font-sans: 'Inter', sans-serif;
-  
   --animate-fade-in: fadeIn 0.5s ease-out;
 }
 
@@ -19,21 +16,83 @@
 }
 
 @layer base {
-  body {
-    @apply bg-fiatGray text-fiatDark font-sans antialiased min-h-screen selection:bg-fiatRed selection:text-white;
-  }
+  :root { color-scheme: light; font-family: 'Inter', sans-serif; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body { @apply text-fiatDark font-sans antialiased min-h-screen selection:bg-fiatRed selection:text-white; margin: 0; background: linear-gradient(160deg, #FFFFFF 0%, #F5F6F8 55%, #ECEFF3 100%); }
+  button, input, select, textarea { font: inherit; }
+  button:focus-visible, a:focus-visible { outline: 3px solid rgb(200 16 46 / 35%); outline-offset: 3px; }
 }
 
 @layer components {
-  .input-field {
-    @apply w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-fiatRed/20 focus:border-fiatRed block p-3 transition-all duration-200 outline-none shadow-sm hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed;
-  }
-  
-  .label-text {
-    @apply block mb-2 text-sm font-medium text-gray-700;
-  }
-  
-  .btn-primary {
-    @apply w-full text-white bg-fiatRed hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg text-base px-5 py-3 text-center shadow-md hover:shadow-lg transition-all duration-300;
-  }
+  .input-field { @apply w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-fiatRed/20 focus:border-fiatRed block p-3 transition-all duration-200 outline-none shadow-sm hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed; }
+  .label-text { @apply block mb-2 text-sm font-medium text-gray-700; }
+  .btn-primary { @apply w-full text-white font-semibold rounded-xl text-base px-5 py-3 text-center shadow-md transition-all duration-200; background: linear-gradient(135deg, #E30613 0%, #C8102E 55%, #8B0A1D 100%); }
+}
+
+.app-shell, .screen-root { background: linear-gradient(160deg, #FFFFFF 0%, #F5F6F8 55%, #ECEFF3 100%) !important; }
+.screen-root { color: #101114; }
+.results-screen { min-height: 0; }
+.screen-header { background: linear-gradient(135deg, #101114 0%, #252A31 65%, #363B44 100%) !important; border-bottom-color: #C8102E !important; box-shadow: 0 8px 22px rgb(16 17 20 / 16%); }
+.screen-header h1, .screen-header p { color: #FFFFFF; }
+.screen-header button { background-color: rgb(255 255 255 / 7%); border-color: rgb(255 255 255 / 18%); }
+.vehicle-screen .screen-content { background: rgb(255 255 255 / 96%); border-color: #E5E7EB; box-shadow: 0 8px 30px rgb(16 17 20 / 7%); }
+.vehicle-screen h1 { color: #101114 !important; }
+.vehicle-screen h1 > div { background: linear-gradient(135deg, #101114, #30343B) !important; border-color: #3B414A; box-shadow: 0 8px 20px rgb(16 17 20 / 18%); }
+
+.vehicle-screen input, .vehicle-screen select, .symptom-screen input, .symptom-screen select, .symptom-screen textarea { background-color: #FFFFFF !important; border-color: #D5DBE3 !important; color: #101114 !important; box-shadow: 0 2px 8px rgb(16 17 20 / 3%); transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
+.vehicle-screen input:focus, .vehicle-screen select:focus, .symptom-screen input:focus, .symptom-screen select:focus, .symptom-screen textarea:focus { border-color: #C8102E !important; box-shadow: 0 0 0 3px rgb(200 16 46 / 12%) !important; outline: none; }
+
+.vehicle-screen button.bg-fiatRed, .symptom-screen button.bg-fiatRed, .empty-results button.bg-fiatRed, .results-screen a.bg-fiatRed { background: linear-gradient(135deg, #E30613 0%, #C8102E 55%, #8B0A1D 100%) !important; box-shadow: 0 8px 18px rgb(200 16 46 / 18%); transition: background 200ms ease, box-shadow 200ms ease, border-color 200ms ease, color 200ms ease; }
+.vehicle-screen button.bg-fiatRed:hover:not(:disabled), .symptom-screen button.bg-fiatRed:hover:not(:disabled), .empty-results button.bg-fiatRed:hover, .results-screen a.bg-fiatRed:hover { filter: brightness(1.06); }
+.vehicle-screen button:disabled, .symptom-screen button:disabled { filter: saturate(.55); box-shadow: none; }
+
+.symptom-screen form > div > div { background-color: rgb(255 255 255 / 65%); border-color: #E5E7EB; }
+.symptom-screen form .grid.grid-cols-5 button { background-color: #FFFFFF; border-color: #E5E7EB; box-shadow: 0 4px 14px rgb(16 17 20 / 5%); transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.symptom-screen form .grid.grid-cols-5 button[class*="border-fiatRed"] { background: linear-gradient(145deg, #FFF3F4, #FFFFFF); border-color: #C8102E !important; box-shadow: 0 7px 16px rgb(200 16 46 / 12%); }
+
+.results-screen .ai-opinion-card { display: none !important; }
+.results-screen .screen-content .bg-white, .results-screen .screen-content .bg-gray-50 { border-color: #E5E7EB; box-shadow: 0 8px 30px rgb(16 17 20 / 7%); }
+.results-screen .screen-content a.bg-yellow-400 { box-shadow: 0 4px 12px rgb(146 101 0 / 14%); }
+.symptom-screen > div:last-child,
+.results-screen > div:last-child { background-color: #101114 !important; border-color: #30343B !important; }
+
+.screen-root .screen-content > div,
+.screen-root form > div > div,
+.screen-root .screen-content .bg-white,
+.screen-root .screen-content .bg-gray-50 {
+  border-color: #E5E7EB;
+}
+.screen-root .screen-content .bg-white,
+.screen-root .screen-content .bg-gray-50 {
+  box-shadow: 0 6px 24px rgb(16 17 20 / 6%);
+}
+.screen-root button,
+.screen-root a {
+  transition-property: color, background-color, background-image, border-color, box-shadow, filter;
+  transition-duration: 180ms;
+  transition-timing-function: ease;
+}
+.screen-root button:hover:not(:disabled),
+.screen-root a:hover {
+  box-shadow: 0 6px 16px rgb(16 17 20 / 9%);
+}
+.screen-root button.bg-fiatRed:hover:not(:disabled),
+.screen-root a.bg-fiatRed:hover {
+  box-shadow: 0 8px 20px rgb(200 16 46 / 24%);
+}
+.screen-root input:disabled,
+.screen-root select:disabled,
+.screen-root textarea:disabled {
+  background-color: #F3F4F6 !important;
+  color: #9CA3AF !important;
+}
+.screen-root :is(input, select, textarea):focus-visible {
+  outline-color: rgb(200 16 46 / 45%);
+}
+.screen-root .bg-green-50,
+.screen-root .bg-green-100 {
+  border-color: #B7E4C7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
