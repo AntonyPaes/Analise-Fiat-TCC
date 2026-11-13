@@ -1,0 +1,194 @@
+name: Testes Fiat Assist
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+  DATABASE_URL: ''
+  DB_HOST: ''
+  DB_NAME: ''
+  DB_USER: ''
+  DB_PASSWORD: ''
+  GEMINI_API_KEY: ''
+  GOOGLE_API_KEY: ''
+
+jobs:
+  backend:
+    name: Backend - Jest e SQLite
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+    env:
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependências do backend
+        run: npm ci --include=dev
+      - name: Confirmar SQLite em memória
+        run: node -e "const db = require('./config/database'); if (process.env.NODE_ENV !== 'test' || db.getDialect() !== 'sqlite' || db.options.storage !== ':memory:') throw new Error('Banco de testes não isolado'); console.log('SQLite em memória confirmado'); db.close();"
+      - name: Executar todas as suítes Jest e gerar cobertura
+        run: node node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --ci --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=json-summary --json --outputFile=coverage/jest-results.json
+      - name: Publicar relatórios do backend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jest-cobertura
+          path: backend/coverage/
+          if-no-files-found: warn
+          retention-days: 14
+
+  frontend:
+    name: Frontend - lint, testes e build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+        working-directory: frontend
+    env:
+      VITE_API_URL: https://fiat-api.test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+      - name: Instalar dependências do frontend
+        id: frontend-install
+        run: npm ci --include=dev
+      - name: Instalar dependências usadas pelos testes de interface
+        id: backend-install
+        working-directory: backend
+        run: npm ci --include=dev
+      - name: Preparar relatórios
+        if: ${{ !cancelled() && steps.frontend-install.outcome == 'success' }}
+        run: mkdir -p test-results
+      - name: Executar lint existente
+        if: ${{ !cancelled() && steps.frontend-install.outcome == 'success' }}
+        run: npm run lint 2>&1 | tee test-results/lint.log
+      - name: Executar testes de configuração e renderização
+        if: ${{ !cancelled() && steps.frontend-install.outcome == 'success' && steps.backend-install.outcome == 'success' }}
+        run: node --test --experimental-test-isolation=none --test-reporter=tap tests/api-config.test.mjs tests/parts-recommendations.test.mjs 2>&1 | tee test-results/frontend-tests.tap
+      - name: Compilar frontend
+        if: ${{ !cancelled() && steps.frontend-install.outcome == 'success' }}
+        env:
+          NODE_ENV: production
+        run: npm run build 2>&1 | tee test-results/build.log
+      - name: Publicar relatórios e build do frontend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-relatorios-build
+          path: |
+            frontend/test-results/
+            frontend/dist/
+          if-no-files-found: warn
+          retention-days: 14
+
+  navegadores:
+    name: Interface - Chrome e Edge
+    runs-on: windows-2022
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      VITE_API_URL: https://fiat-api.test
+      BROWSER_AUDIT_API_URL: https://fiat-api.test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+      - name: Instalar dependências do backend
+        working-directory: backend
+        run: npm ci --include=dev
+      - name: Instalar dependências do frontend
+        working-directory: frontend
+        run: npm ci --include=dev
+      - name: Conferir navegadores nos caminhos exigidos pelo roteiro
+        run: |
+          $browsers = @(
+            'C:/Program Files/Google/Chrome/Application/chrome.exe',
+            'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
+          )
+          foreach ($browser in $browsers) {
+            if (-not (Test-Path -LiteralPath $browser)) {
+              throw "Navegador obrigatório não encontrado: $browser"
+            }
+          }
+      - name: Compilar frontend para API isolada de testes
+        working-directory: frontend
+        env:
+          NODE_ENV: production
+        run: npm run build
+      - name: Confirmar SQLite em memória
+        working-directory: backend
+        env:
+          NODE_ENV: test
+        run: node -e "const db = require('./config/database'); if (process.env.NODE_ENV !== 'test' || db.getDialect() !== 'sqlite' || db.options.storage !== ':memory:') throw new Error('Banco de testes não isolado'); console.log('SQLite em memória confirmado'); db.close();"
+      - name: Executar roteiro existente de Chrome e Edge
+        id: browser-audit
+        env:
+          NODE_ENV: test
+        run: |
+          $env:TEST_EXECUTION_DATE = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
+          node frontend/tests/browser-audit.cjs
+          exit $LASTEXITCODE
+      - name: Conferir execução efetiva nos dois navegadores
+        if: ${{ !cancelled() && steps.browser-audit.outcome == 'success' }}
+        run: |
+          $report = Get-Content -LiteralPath 'documentacao/testes/evidencias/browser-results.json' -Raw | ConvertFrom-Json
+          if (@($report.errors).Count -gt 0) { throw 'O roteiro registrou erros de execução.' }
+          foreach ($browser in @('Chrome', 'Edge')) {
+            $checks = @($report.results | Where-Object { $_.browser -eq $browser })
+            if ($checks.Count -eq 0 -or @($checks | Where-Object { $_.status -ne 'Aprovado' }).Count -gt 0) {
+              throw "Há testes ausentes, não executados ou reprovados em $browser."
+            }
+            "$browser`: $($checks.Count) verificações aprovadas"
+          }
+      - name: Publicar capturas, respostas e relatórios dos navegadores
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: navegadores-chrome-edge-evidencias
+          path: |
+            documentacao/testes/evidencias/browser-*.json
+            documentacao/testes/evidencias/browser-*.log
+            documentacao/testes/evidencias/Chrome-*.png
+            documentacao/testes/evidencias/Edge-*.png
+          if-no-files-found: warn
+          retention-days: 14
