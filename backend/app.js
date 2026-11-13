@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const { createCorsOptions } = require('./config/cors');
 
 const { sequelize, Vehicle, VehicleCatalog, Symptom, Cause, RepairGuide, SymptomCatalog, CauseCatalog, RepairGuideCatalog } = require('./models');
 const { rankDiagnosis } = require('./services/diagnosisService');
 
 const app = express();
-app.use(cors());
+app.use(cors(createCorsOptions()));
 app.use(express.json());
 
 app.get('/api/vehicles/options', async (req, res) => {

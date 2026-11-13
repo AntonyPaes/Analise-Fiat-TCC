@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Gauge, Disc, MoveVertical, Zap, ChevronRight, AlertCircle, Wrench } from 'lucide-react';
+import { apiFetch } from '../config/api';
 
 const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,13 +16,13 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
   useEffect(() => {
     const fetchCatalog = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/symptoms/catalog');
-        if (response.ok) {
-          const data = await response.json();
-          setCatalog(data);
-        }
+        const response = await apiFetch('/api/symptoms/catalog');
+        if (!response.ok) throw new Error(`Não foi possível carregar o catálogo de sintomas (HTTP ${response.status}). Tente novamente mais tarde.`);
+        const data = await response.json();
+        setCatalog(data);
       } catch (err) {
         console.error('Erro ao carregar catálogo de sintomas para autocompletar:', err);
+        setError(err.message);
       }
     };
     fetchCatalog();
@@ -68,7 +69,7 @@ const SymptomReportForm = ({ vehicleData, onBack, onNext }) => {
         throw new Error('Identificação do veículo não encontrada. Volte e registre o veículo novamente.');
       }
 
-      const response = await fetch(`http://localhost:3000/api/vehicles/${vehicleData.id}/diagnose`, {
+      const response = await apiFetch(`/api/vehicles/${vehicleData.id}/diagnose`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

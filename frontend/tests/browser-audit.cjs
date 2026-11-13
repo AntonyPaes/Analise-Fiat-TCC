@@ -11,6 +11,7 @@ const results = [];
 const network = [];
 const errors = [];
 const executionDate = process.env.TEST_EXECUTION_DATE || '2026-11-13';
+const auditApiUrl = new URL(process.env.BROWSER_AUDIT_API_URL || process.env.VITE_API_URL || 'https://fiat-api.test');
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function until(fn, timeout = 15000) {
   const start = Date.now();
@@ -104,8 +105,15 @@ async function main() {
       let browserVersion;
       try {
         const portFile = path.join(profile, 'DevToolsActivePort');
-        await until(() => fs.existsSync(portFile), 20000);
-        const [port] = fs.readFileSync(portFile, 'utf8').split(/\r?\n/);
+        const port = await until(() => {
+          try {
+            const value = fs.readFileSync(portFile, 'utf8').split(/\r?\n/)[0];
+            return /^\d+$/.test(value) ? value : undefined;
+          } catch (error) {
+            if (['ENOENT', 'EBUSY', 'EPERM'].includes(error.code)) return undefined;
+            throw error;
+          }
+        }, 20000);
         const version = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json();
         browserVersion = version.Browser;
         browser = await CDP.connect(version.webSocketDebuggerUrl);
@@ -116,7 +124,7 @@ async function main() {
         await page.send('Page.enable');
         await page.send('Runtime.enable');
         await page.send('Network.enable');
-        await page.send('Fetch.enable', { patterns: [{ urlPattern: 'http://localhost:3000/*', requestStage: 'Request' }] });
+        await page.send('Fetch.enable', { patterns: [{ urlPattern: `${auditApiUrl.origin}/*`, requestStage: 'Request' }] });
         page.on('Fetch.requestPaused', async event => {
           const requestUrl = new URL(event.request.url);
           if (failureMode && event.request.method === 'POST') {
@@ -125,14 +133,19 @@ async function main() {
             return;
           }
           const response = await fetch(`http://127.0.0.1:${api.port}${requestUrl.pathname}`, {
-            method: event.request.method, headers: { 'Content-Type': 'application/json' },
+            method: event.request.method, headers: {
+              'Content-Type': 'application/json', Origin: 'http://localhost:5173',
+              ...(event.request.method === 'OPTIONS' ? {
+                'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type'
+              } : {})
+            },
             body: ['GET', 'HEAD'].includes(event.request.method) ? undefined : event.request.postData
           });
           const body = await response.text();
           network.push({ browser: browserName, method: event.request.method, path: requestUrl.pathname,
             requestBody: event.request.postData ? JSON.parse(event.request.postData) : null, status: response.status, response: body ? JSON.parse(body) : null });
           await page.send('Fetch.fulfillRequest', { requestId: event.requestId, responseCode: response.status,
-            responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Access-Control-Allow-Origin', value: '*' },
+            responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Access-Control-Allow-Origin', value: new URL(appUrl).origin },
               { name: 'Access-Control-Allow-Headers', value: 'Content-Type' }, { name: 'Access-Control-Allow-Methods', value: 'GET,POST,OPTIONS' }],
             body: Buffer.from(body).toString('base64') });
         });
@@ -287,10 +300,10 @@ async function main() {
         });
         await record('SEG02', 'Falha de comunicação', 'Simular conexão recusada somente para POST e solicitar análise.', 'Mensagem de erro visível e permanência no relato.', async () => {
           failureMode = true;
-          try { await clickText('Analisar Problema'); await waitText('Failed to fetch'); }
+          try { await clickText('Analisar Problema'); await waitText('Não foi possível conectar ao backend do Fiat Assist'); }
           finally { failureMode = false; }
           assert.ok((await text()).includes('Relatar Problema'));
-          return 'Erro visível: Failed to fetch; envio encerrado e formulário mantido.';
+          return 'Mensagem de conexão em português visível; envio encerrado e formulário mantido.';
         });
         await record('SUP08', 'Ranking com relato complementar', 'Substituir descrição por relato com pastilhas e analisar.', 'Ranking com correspondência e dificuldade.', async () => {
           await setField('textarea', 'barulho ao frear com pastilhas raspando');

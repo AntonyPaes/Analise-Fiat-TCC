@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CarFront, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { apiFetch } from '../config/api';
 
 const VehicleForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
@@ -22,13 +23,15 @@ const VehicleForm = ({ onNext }) => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/vehicles/options');
+        const response = await apiFetch('/api/vehicles/options');
+        if (!response.ok) throw new Error(`Não foi possível carregar os modelos FIAT (HTTP ${response.status}). Tente novamente mais tarde.`);
         const data = await response.json();
         setDbOptions(data);
         const models = [...new Set(data.map(item => item.modelo))].sort();
         setAvailableModels(models);
       } catch (error) {
         console.error("Erro ao carregar opções do banco de dados", error);
+        setStatus({ type: 'error', message: error.message });
       }
     };
     fetchOptions();
@@ -90,7 +93,7 @@ const VehicleForm = ({ onNext }) => {
         throw new Error(`A quilometragem não pode exceder ${MAX_KM.toLocaleString('pt-BR')} km.`);
       }
 
-      const response = await fetch('http://localhost:3000/api/vehicles', {
+      const response = await apiFetch('/api/vehicles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
